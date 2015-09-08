@@ -1,0 +1,48 @@
+<!doctype html>
+
+<html>
+<head>
+  <title>Tarjomeh</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+  <link rel="import" href="bower_components/paper-input/paper-input.html">
+  <link rel="import" href="bower_components/paper-fab/paper-fab.html">
+  
+  <link rel="import" href="bower_components/paper-drawer-panel/paper-drawer-panel.html">
+  <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html">
+  <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html">
+  <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+  <link rel="import" href="bower_components/iron-icon/iron-icon.html">
+  <link rel="import" href="bower_components/iron-icons/iron-icons.html">
+  <link rel="import" href="../bower_components/polymer/polymer.html">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body fullbleed unresolved>
+    
+  <paper-drawer-panel>
+    <paper-header-panel drawer>
+     <!-- <paper-toolbar>Menu</paper-toolbar>-->
+      <div> Drawer content... </div>
+    </paper-header-panel>
+    <paper-header-panel main>
+      <paper-toolbar>
+        <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+        <div class="title">Tarjomeh</div>
+        <iron-icon icon="account-circle"></iron-icon>
+      </paper-toolbar>
+      <div> Main content... </div>
+    </paper-header-panel>
+  </paper-drawer-panel>
+    
+    <div flex>...</div>
+  
+  <script src="main.js"></script>
+</body>
+</html>
