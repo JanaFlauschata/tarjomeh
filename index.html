@@ -24,10 +24,8 @@
   <link rel="import" href="bower_components/iron-icons/iron-icons.html">
   <link rel="import" href="bower_components/iron-pages/iron-pages.html">
   
-    <link rel="import" href="bower_components/firebase-element/firebase.html">
-  <link rel="import" href="bower_components/firebase-element/firebase-auth.html">
-    <link rel="import" href="bower_components/firebase-element/firebase-collection.html">
-
+    <link rel="import" href="tarjomeh-auth/tarjomeh-auth.html">
+ <link rel="import" href="tarjomeh-collection/tarjomeh-collection.html">
 
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -35,9 +33,9 @@
 <body fullbleed unresolved>
 <template id="t" is="dom-bind">
       
-      <firebase-collection id="fbCollection"
-  location="https://radiant-inferno-3701.firebaseio.com/messages"
-  data="{{messages}}"></firebase-collection>
+      <tarjomeh-collection id="dataConnection"
+ path="messages"
+  data="{{messages}}"></tarjomeh-collection>
 
   <paper-drawer-panel>
     <paper-header-panel drawer>
@@ -60,7 +58,7 @@
       </paper-toolbar>
       <iron-pages selected="{{selected}}">
         <div>
-         <firebase-auth id="fbAuth" user="{{user}}" status-known="{{statusKnown}}" location="https://radiant-inferno-3701.firebaseio.com" provider="google" on-error="errorHandler"></firebase-auth>
+         <tarjomeh-auth id="auth" user="{{user}}" status-known="{{statusKnown}}" provider="google"></tarjomeh-auth>
          <div hidden={{!loggedIn(user)}}>
           <paper-button raised on-tap="logout">Logout</paper-button>
           </div>
@@ -72,7 +70,7 @@
         <div>
          <div hidden={{!loggedIn(user)}}>
           <template is="dom-repeat" items="[[messages]]" as="message">
-            <div layout horizontal style="padding: 16px">
+            <div class="layout horizontal" style="padding: 16px">
              <div class="avatar" style$="[[computeImgStyle(message.img)]]"></div>
               <div flex>
               <div>[[message.name]]</div>
@@ -80,7 +78,7 @@
               </div>
             </div>
         </template>
-           <div class="send-message" layout horizontal>
+           <div class="send-message layout horizontal">
               <paper-input flex label="Type message..." id="input" value="{{input}}"></paper-input>
               <paper-fab icon="send" id="sendButton" on-tap="sendMessage"></paper-fab>
             </div>
@@ -97,48 +95,38 @@
 <script>
 
  var template = document.querySelector('#t');
- var firebaseCollection = document.querySelector('#fbCollection');
- var firebaseAuth = document.querySelector('#fbAuth');
+ var dataConnection = document.querySelector('#dataConnection');
+ var auth = document.querySelector('#auth');
 
  document.addEventListener('WebComponentsReady', function () {
     template.selected = 0;
     template.input = '';
-    firebaseCollection = document.querySelector('#fbCollection');
-    firebaseAuth = document.querySelector('#fbAuth');
-    firebaseAuth.addEventListener('login', function(e) {
-      console.log(e.detail);
-      console.log('login');
-    });
-    firebaseAuth.addEventListener('logout', function(e) {
-      console.log('logout');
-    });
+    dataConnection = document.querySelector('#dataConnection');
+    auth = document.querySelector('#auth');
   });
     
   template.sendMessage = function (e) {
     if(!template.input) return;
-    firebaseCollection.add({'uid':template.user.uid,'name':template.user.google.displayName,'img':template.user.google.profileImageURL,'text':template.input});
+    dataConnection.add({'uid':template.user.uid,'name':template.user.google.displayName,'img':template.user.google.profileImageURL,'text':template.input});
     template.input = '';
   };
   
-  template.errorHandler = function(obj) {
-      console.log('login did not work');
+ 
+  template.login = function() {
+    auth.login();
   };
-  
-  template.login = function(obj) {
-      firebaseAuth.login();
-  };
-  
-  template.logout = function(obj) {
-      firebaseAuth.logout();
+
+  template.logout = function() {
+    auth.logout();
   };
   
   template.loggedIn = function(user) {
       return user !== null && user != undefined;
     };
     
-  template.computeImgStyle = function(imageUrl){
-    return 'background-image: url(' + imageUrl + ')';
-  }
+    template.computeImgStyle = function(imageUrl) {
+        return 'background-image: url(' + imageUrl + ')';
+      };
   
 </script>
 </html>
