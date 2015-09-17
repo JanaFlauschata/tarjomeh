@@ -1,0 +1,50 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-sidebar">
+
+  <template>
+
+    <style>
+      :host {
+         
+      }
+      
+      .paper-header {
+        height: 200px;
+        background-color: #757575;
+      }
+      
+    </style>
+    
+    <paper-header-panel mode="waterfall-tall">
+      <div class="paper-header">
+        bla bla bla
+        asdfweeerjiojoijoijoijoioiqweoqirwjeoijqrwoei
+      </div>
+        <div class="content">
+          <paper-button on-tap="_logout">Logout</paper-button>
+        </div>
+      <div>
+    </paper-header-panel>
+    
+  </template>
+  <script>
+    Polymer({
+      is: "tarjomeh-sidebar",
+      properties: {
+        
+      },
+      
+      _logout: function() {
+        this.fire('logout-requested', {});
+      }
+    
+    });
+  </script>
+
+</dom-module>

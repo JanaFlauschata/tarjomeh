@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>tarjomeh-userlist demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <script src="../../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <link rel="import" href="../../bower_components/paper-styles/demo-pages.html">
+    <link rel="import" href="../tarjomeh-userlist.html">
+  </head>
+  <body class="vertical-section-container">
+    <template id="t" is="dom-bind">
+      <div class="vertical-section">
+        <h2>tarjomeh-userlist for given users</h2>
+          <tarjomeh-userlist users="[[users]]"></tarjomeh-userlist-entry>
+      </div>
+    </template>
+  </body>
+  
+  <script>
+
+ var template = document.querySelector('#t');
+
+ document.addEventListener('WebComponentsReady', function () {
+   
+   template.users = [
+      {
+        "username": "Pokertier Zwoelph",
+        "imageUrl": "../../resources/avatar.jpg",
+        "nativeLanguages": [
+          {
+            "name": "german"
+          }
+        ],
+        "learningLanguages": [
+          {
+            "name": "persian"
+          },
+          {
+            "name": "swedish"
+          }
+        ]
+      },
+      {
+        "username": "Chloé C",
+        "imageUrl": "../../resources/chloe.jpg",
+        "nativeLanguages": [
+          {
+            "name": "ultrasound"
+          }
+        ],
+        "learningLanguages": [
+          {
+            "name": "german"
+          }
+        ]
+      },
+      {
+        "username": "Königin Zwiebel von Aldor",
+        "imageUrl": "../../resources/zwiebel.jpg",
+        "nativeLanguages": [
+          {
+            "name": "ultrasound"
+          }
+        ],
+        "learningLanguages": [
+          {
+            "name": "german"
+          },
+          {
+            "name": "english"
+          }
+        ]
+      }
+     ];
+
+    console.log(template.users);
+  });
+  </script>
+</html>

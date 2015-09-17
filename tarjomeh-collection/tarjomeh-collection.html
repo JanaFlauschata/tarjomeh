@@ -1,0 +1,50 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/firebase-element/firebase.html">
+<link rel="import" href="../bower_components/firebase-element/firebase-collection.html">
+
+<dom-module id="tarjomeh-collection">
+
+  <template>
+
+    <style>
+    </style>
+    
+    <firebase-collection id="fbCollection" location="{{_computePath(path)}}" data="{{data}}"></firebase-collection>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-collection",
+      properties: {
+        path: {
+          type: String,
+          value: ''
+        },
+        data: {
+          type: Array,
+          value: [],
+          notify: true
+        }
+      },
+      
+      _computePath: function(path) {
+        return 'https://radiant-inferno-3701.firebaseio.com/' + path;
+      },
+      
+      add: function(entry) {
+        this.$.fbCollection.add(entry);
+      },
+      
+      remove: function(entry) {
+        this.$.fbCollection.remove(entry);
+      },
+      
+      removeByKey: function(key) {
+        this.$.fbCollection.removeByKey(key);
+      }
+    });
+  </script>
+
+</dom-module>

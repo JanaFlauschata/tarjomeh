@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>tarjomeh-userlist-entry demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <script src="../../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <link rel="import" href="../../bower_components/paper-styles/demo-pages.html">
+    <link rel="import" href="../tarjomeh-userlist-entry.html">
+  </head>
+  <body class="vertical-section-container">
+    <template id="t" is="dom-bind">
+      <div class="vertical-section">
+        <h2>tarjomeh-userlist-entry for given user properties</h2>
+          <tarjomeh-userlist-entry username="Pokertier Zwoelph" image-url="../../resources/avatar.jpg" native-languages="[[oneLanguage]]" learning-languages="[[twoLanguages]]"></tarjomeh-userlist-entry>
+      </div>
+    
+      <div class="vertical-section">
+        <h2>with many languages</h2>
+          <tarjomeh-userlist-entry username="Pokertier Zwoelph" image-url="../../resources/avatar.jpg" native-languages="[[oneLanguage]]" learning-languages="[[manyLanguages]]"></tarjomeh-userlist-entry>
+      </div>
+      
+      <div class="vertical-section">
+        <h2>without profile pic</h2>
+          <tarjomeh-userlist-entry username="Pokertier Zwoelph" native-languages="[[oneLanguage]]" learning-languages="[[twoLanguages]]"></tarjomeh-userlist-entry>
+      </div>
+      
+      <div class="vertical-section">
+        <h2>with no languages</h2>
+          <tarjomeh-userlist-entry username="Pokertier Zwoelph" image-url="../../resources/avatar.jpg"></tarjomeh-userlist-entry>
+      </div>
+    </template>
+  </body>
+  
+  <script>
+
+ var template = document.querySelector('#t');
+
+ document.addEventListener('WebComponentsReady', function () {
+    template.oneLanguage = [
+      {
+          "name": "german"
+      }
+    ];
+    
+    template.twoLanguages = [
+      {
+          "name": "persian"
+      },
+      {
+          "name": "swedish"
+      }
+    ];
+    
+    template.manyLanguages = [
+      {
+          "name": "persian"
+      },
+      {
+          "name": "swedish"
+      },
+      {
+          "name": "russian"
+      },
+      {
+          "name": "arabic"
+      },
+      {
+          "name": "french"
+      },
+      {
+          "name": "spanish"
+      },
+      {
+          "name": "italian"
+      },
+      {
+          "name": "japanese"
+      }
+    ];
+  });
+  </script>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>tarjomeh-loginscreen demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <script src="../../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <link rel="import" href="../../bower_components/paper-styles/demo-pages.html">
+    <link rel="import" href="../tarjomeh-loginscreen.html">
+  </head>
+  <body class="vertical-section-container">
+    <template id="t" is="dom-bind">
+      <div class="vertical-section">
+        <h2>tarjomeh-login screen</h2>
+        <tarjomeh-loginscreen errorMessage="{{errorMessage}}"></tarjomeh-loginscreen>
+      </div>
+    </template>
+  </body>
+  
+  <script>
+
+ var template = document.querySelector('#t');
+
+ document.addEventListener('WebComponentsReady', function () {
+   
+  });
+  </script>
+</html>

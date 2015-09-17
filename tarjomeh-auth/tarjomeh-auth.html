@@ -1,0 +1,107 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/firebase-element/firebase.html">
+<link rel="import" href="../bower_components/firebase-element/firebase-auth.html">
+<link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
+
+<dom-module id="tarjomeh-auth">
+
+  <template>
+
+    <style>
+    </style>
+    
+    <firebase-auth id="fbAuth" user="{{fbUser}}" status-known="{{statusKnown}}" location="https://radiant-inferno-3701.firebaseio.com" provider="{{provider}}" params={{params}} on-error="_errorHandler" redirect></firebase-auth>
+    
+    <tarjomeh-collection id="userCollection"></tarjomeh-collection>
+  </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-auth",
+      listeners: {
+        "login": "_processLogin",
+        "logout": "_processLogout",
+        "user-created": "_processCreatedUser"
+      },
+      properties: {
+        user: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+        statusKnown: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        provider: {
+          type: String,
+          value: "password",
+          notify: true
+        },
+        params: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+        errorMessage: {
+          type: String,
+          value: "",
+          notify: true
+        }
+      },
+      
+      login : function() {
+        this.$.fbAuth.login(this.params,{});
+      },
+  
+      logout : function() {
+        this.$.fbAuth.logout();
+        this.user = null;
+      },  
+      
+      createUser : function(email, password) {
+        this.$.fbAuth.createUser(email, password);
+      },
+      
+      _processLogin : function(event) {
+        this.user = {};
+        this.user.uid = this.fbUser.uid;
+        switch(this.provider) {
+          case 'password':
+            this.user.name = 'no displayname';
+            this.user.imageUrl = '';
+            break;
+          case 'google':
+            this.user.name = this.fbUser.google.displayName;
+            this.user.imageUrl = this.fbUser.google.profileImageURL;
+            break;
+          default:
+            throw 'Unknown provider: ' + this.provider;
+        }
+        
+        this.$.userCollection.path = 'users/' + this.user.uid;
+        this.$.userCollection.add(true);
+        console.log('login succeeded!');
+
+      },
+      
+       _processLogout : function(event) {
+        this.$.userCollection.path = 'users';
+        this.$.userCollection.removeByKey(this.user.uid);
+        console.log('logout succeeded!');
+      },
+      
+       _processCreatedUser : function(event) {
+        console.log('user created!');
+      },
+      
+       _errorHandler : function(event) {
+        this.errorMessage = event.detail.message;
+        console.log(this.errorMessage);
+      }
+    });
+  </script>
+
+</dom-module>

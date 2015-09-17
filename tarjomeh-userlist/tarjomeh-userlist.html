@@ -1,0 +1,38 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../tarjomeh-userlist-entry/tarjomeh-userlist-entry.html">
+
+<dom-module id="tarjomeh-userlist">
+
+  <template>
+
+    <style>
+       tarjomeh-userlist-entry {
+        border-bottom: 1px solid #e0e0e0;
+      }
+      tarjomeh-userlist-entry:last-of-type {
+        border-bottom: 0px;
+      }
+    </style>
+    
+    <div class="layout vertical">
+      <template is="dom-repeat" items="[[users]]" as="user">
+           <tarjomeh-userlist-entry username="[[user.username]]" image-url="[[user.imageUrl]]" native-languages="[[user.nativeLanguages]]" learning-languages="[[user.learningLanguages]]"></tarjomeh-userlist-entry>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-userlist",
+      properties: {
+        users: {
+          type: Array,
+          value: [{}]
+        }
+      }
+      
+    });
+  </script>
+
+</dom-module>
