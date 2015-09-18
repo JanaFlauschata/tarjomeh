@@ -1,0 +1,116 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
+
+<dom-module id="tarjomeh-profile-dialog">
+
+  <template>
+
+    <style>
+     paper-dialog {
+        width: 100vw;
+        height: 100vh;
+      };
+    </style>
+    
+    <tarjomeh-collection id="languagesCollection" path="languages" data="{{languages}}"></tarjomeh-collection>
+    
+    <paper-dialog id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <paper-toolbar>
+        <div class="layout horizontal"><paper-icon-button icon="arrow-back" on-tap="_close"></paper-icon-button></div>
+        <div class="title flex">Edit your profile</div>
+        <div><paper-icon-button icon="save" on-tap=""></paper-icon-button></div>
+      </paper-toolbar>
+      <div>
+        
+      <div hidden={{!_hasAccount(user)}}>
+        <paper-input class="flex" value="{{user.name}}" label="Change your display name"></paper-input>
+      </div>
+      
+      <div>
+        <div>
+          <iron-icon icon="language"></iron-icon>
+          <template is="dom-repeat" items="{{user.nativeLanguages}}" as="nativeLanguage">
+            <span>[[nativeLanguage.name]]</span>
+          </template>
+        </div>
+        <div>
+          <paper-dropdown-menu>
+            <paper-menu class="dropdown-content">
+              <template is="dom-repeat" items="[[_chooseableNativeLanguages]]" as="language">
+                <paper-item>[[language.name]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dropdown-menu>
+        </div>
+      </div>
+      
+      <div>
+        <iron-icon icon="social:school"></iron-icon>
+        <template is="dom-repeat" items="{{user.learningLanguages}}" as="learningLanguage">
+            <span>[[learningLanguage.name]]</span>
+        </template>
+      </div>
+      
+      </div>
+    </paper-dialog>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-profile-dialog",
+      properties: {
+        user: {
+          type: Object,
+          value: function(){
+            return {};
+          },
+          notify: true
+        },
+        _chooseableNativeLanguages: {
+          type: Array,
+          value: function() {
+            return []
+          }
+        }
+      },
+      
+      ready: function() {
+        this.languages.forEach(function(entry) {
+          if(this.user.nativeLanguages.indexOf(entry) > -1) {
+            this._chooseableNativeLanguages.push(entry);
+          }
+        });
+      },
+      
+      open: function() {
+        this.$.dialog.open();
+        console.log(this.user);
+      },
+      
+      _close: function() {
+        this.$.dialog.close();
+      },
+      
+      _hasAccount: function(user) {
+        if (user) {
+          return user.provider === 'password';
+        }
+        return false;
+      }
+    });
+  </script>
+
+</dom-module>
