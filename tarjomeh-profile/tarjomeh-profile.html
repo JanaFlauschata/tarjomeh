@@ -1,0 +1,87 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
+
+<dom-module id="tarjomeh-profile">
+
+  <template>
+
+    <style>
+       
+    </style>
+    
+    <tarjomeh-collection id="profileCollection" path="{{_computePath(fbUser)}}" data="{{profiles}}"></tarjomeh-collection>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-profile",
+      properties: {
+        fbUser: {
+          type: Object,
+          value: function(){
+            return {};
+          },
+          notify: true
+        },
+        user: {
+         type: Object,
+          value: function(){
+            return {};
+          },
+          notify: true
+        }
+      },
+      
+      ready: function() {
+        console.log(this.$.profileCollection.path);
+        
+        //TODO refactor
+        this.$.profileCollection.$.fbCollection.query.once("value", function(snapshot) {     
+          
+          this.user = this.$.profileCollection.getByKey('profile');
+          console.log(this.user); 
+          if (!this.user) {
+            this.user = {};
+            this.user.uid = this.fbUser.uid;
+            this.user.provider = this.fbUser.provider;
+          };
+          
+          //TDO refactor
+          this.user.__firebaseKey__ = null;
+          
+          switch(this.user.provider) {
+          case 'password':
+            this.user.name = 'no displayname';
+            this.user.imageUrl = '';
+            break;
+          case 'google':
+            this.user.name = this.fbUser.google.displayName;
+            this.user.imageUrl = this.fbUser.google.profileImageURL;
+            break;
+          default:
+            throw 'Unknown provider: ' + this.user.provider;
+          }
+        
+          this.$.profileCollection.addToChild('profile',this.user);
+
+          console.log(this.user);  
+        }.bind(this), function (errorObject) {
+          throw 'Profile could not be read!';
+        });
+      
+      },
+      
+      _computePath: function(fbUser) {
+        if (fbUser) {
+          return 'profiles/' + fbUser.uid;
+        }
+        throw 'fbUser is null!';
+        return null;
+      }
+      
+    });
+  </script>
+
+</dom-module>
