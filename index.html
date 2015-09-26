@@ -31,7 +31,9 @@
   
     <link rel="import" href="tarjomeh-loginscreen/tarjomeh-loginscreen.html">
  <link rel="import" href="tarjomeh-collection/tarjomeh-collection.html">
+  <link rel="import" href="tarjomeh-profile/tarjomeh-profile.html">
   <link rel="import" href="tarjomeh-sidebar/tarjomeh-sidebar.html">
+  
 
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -43,21 +45,20 @@
       
       <paper-toast id="errorToast" text="{{errorMessage}}"></paper-toast>
       
-      <tarjomeh-auth id="auth" user="{{user}}" provider="{{provider}}" params="{{params}}" error-message="{{errorMessage}}"></tarjomeh-auth>
+      <tarjomeh-auth id="auth" fb-user="{{fbUser}}" provider="{{provider}}" params="{{params}}" error-message="{{errorMessage}}"></tarjomeh-auth>
 
-      <div hidden={{loggedIn(user)}} class="layout horizontal center center-justified">
+      <div hidden={{loggedIn(fbUser)}} class="layout horizontal center center-justified">
         <tarjomeh-loginscreen provider="{{provider}}" params="{{params}}"></tarjomeh-loginscreen>
       </div>
       
-      <div hidden={{!loggedIn(user)}}>
-      <tarjomeh-collection id="dataConnection"
- path="messages"
-  data="{{messages}}"></tarjomeh-collection>
+     <template is="dom-if" if="{{fbUser.uid}}" restamp hidden={{!loggedIn(fbUser)}}> <!-- find out why that does not work with password auth... check whether it works with the firebase collection for profile loading-->
+       <div hidden="{{!loggedIn(fbUser)}}">
+       <tarjomeh-profile fb-user="[[fbUser]]" user="{{user}}"></tarjomeh-profile>
+        
+    <tarjomeh-collection id="dataConnection" path="messages" data="{{messages}}"></tarjomeh-collection>
 
   <paper-drawer-panel>
-    <!--<paper-header-panel drawer>-->
-      <tarjomeh-sidebar drawer></tarjomeh-sidebar>
-    <!--</paper-header-panel>-->
+     <tarjomeh-sidebar user="{{user}}" drawer></tarjomeh-sidebar>
     <paper-header-panel main>
       <paper-toolbar class="medium-tall">
         <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
@@ -74,10 +75,13 @@
       </paper-toolbar>
       <iron-pages selected="{{selected}}">
         <div>
-         Empty Tab
+         <div>{{user.uid}}</div>
+         <div>{{user.name}}</div>
+         <div>{{user.imageurl}}</div>
+         <div>{{user.provider}}</div>
         </div>
         
-        <div>
+       <div>
           <template is="dom-repeat" items="[[messages]]" as="message">
             <div class="layout horizontal" style="padding: 16px">
              <div class="avatar" style$="[[computeImgStyle(message.img)]]"></div>
@@ -97,23 +101,24 @@
   </paper-drawer-panel>
   </div>
 </template>
+</template>
 </body>
 <script>
 
  var template = document.querySelector('#t');
- var dataConnection = document.querySelector('#dataConnection');
+ //var dataConnection = document.querySelector('#dataConnection');
  var auth = document.querySelector('#auth');
 
  document.addEventListener('WebComponentsReady', function () {
     template.selected = 0;
     template.input = '';
-    dataConnection = document.querySelector('#dataConnection');
+    //dataConnection = document.querySelector('#dataConnection');
     auth = document.querySelector('#auth');
   });
     
   template.sendMessage = function (e) {
     if(!template.input) return;
-    dataConnection.add({'uid':template.user.uid,'name':template.user.name,'img':template.user.imageUrl,'text':template.input});
+    template.$.dataConnection.add({'uid':template.user.uid,'name':template.user.name,'img':template.user.imageurl,'text':template.input});
     template.input = '';
   };
 
@@ -122,8 +127,8 @@ document.addEventListener('logout-requested', function () {
   template.showToast('Goodbye!');
 });
 
-document.addEventListener('login-requested', function () {
-  template.$.auth.login();
+document.addEventListener('login-requested', function (event) {
+  template.$.auth.login(event.detail.provider, event.detail.params);
 });
 
 document.addEventListener('create-user-requested', function (event) {

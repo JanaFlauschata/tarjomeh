@@ -10,10 +10,10 @@
 
     <style>
     </style>
+    <firebase-auth id="fbAuth" user="{{fbUser}}" location="https://radiant-inferno-3701.firebaseio.com" provider={{provider}} params={{params}} on-error="_errorHandler" redirect></firebase-auth>
     
-    <firebase-auth id="fbAuth" user="{{fbUser}}" status-known="{{statusKnown}}" location="https://radiant-inferno-3701.firebaseio.com" provider="{{provider}}" params={{params}} on-error="_errorHandler" redirect></firebase-auth>
-    
-    <tarjomeh-collection id="userCollection"></tarjomeh-collection>
+    <!--<tarjomeh-collection id="userCollection" path="users"></tarjomeh-collection>-->
+
   </template>
 
   <script>
@@ -25,24 +25,11 @@
         "user-created": "_processCreatedUser"
       },
       properties: {
-        user: {
+        fbUser: {
           type: Object,
-          value: {},
-          notify: true
-        },
-        statusKnown: {
-          type: Boolean,
-          value: false,
-          notify: true
-        },
-        provider: {
-          type: String,
-          value: "password",
-          notify: true
-        },
-        params: {
-          type: Object,
-          value: {},
+          value: function(){
+            return {};
+          },
           notify: true
         },
         errorMessage: {
@@ -52,13 +39,15 @@
         }
       },
       
-      login : function() {
-        this.$.fbAuth.login(this.params,{});
+      login : function(provider, params) {
+        this.provider = provider;
+        this.$.fbAuth.login(params);
       },
   
       logout : function() {
+        //this.$.userCollection.removeByKey(this.fbUser.uid);
         this.$.fbAuth.logout();
-        this.user = null;
+        //this.fbUser = null; //TODO ?
       },  
       
       createUser : function(email, password) {
@@ -66,30 +55,12 @@
       },
       
       _processLogin : function(event) {
-        this.user = {};
-        this.user.uid = this.fbUser.uid;
-        switch(this.provider) {
-          case 'password':
-            this.user.name = 'no displayname';
-            this.user.imageUrl = '';
-            break;
-          case 'google':
-            this.user.name = this.fbUser.google.displayName;
-            this.user.imageUrl = this.fbUser.google.profileImageURL;
-            break;
-          default:
-            throw 'Unknown provider: ' + this.provider;
-        }
-        
-        this.$.userCollection.path = 'users/' + this.user.uid;
-        this.$.userCollection.add(true);
+        //this.$.userCollection.addToChild(this.fbUser.uid,this.fbUser.expires);
         console.log('login succeeded!');
 
       },
       
        _processLogout : function(event) {
-        this.$.userCollection.path = 'users';
-        this.$.userCollection.removeByKey(this.user.uid);
         console.log('logout succeeded!');
       },
       

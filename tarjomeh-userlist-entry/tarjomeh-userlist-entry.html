@@ -43,7 +43,7 @@
     </style>
     
     <div class="layout horizontal">
-      <div class="avatar" style$="[[_computeImgStyle(imageUrl)]]"></div>
+      <div class="avatar" style$="[[_computeImgStyle(imageurl)]]"></div>
       <div class="flex">
         <div class="name">[[username]]</div>
         <div class="flex"></div>
@@ -86,8 +86,8 @@
         }
       },
       
-      _computeImgStyle : function(imageUrl) {
-        return 'background-image: url(' + imageUrl + ')';
+      _computeImgStyle : function(imageurl) {
+        return 'background-image: url(' + imageurl + ')';
       }
     });
   </script>

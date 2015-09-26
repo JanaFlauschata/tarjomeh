@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
@@ -12,7 +12,8 @@
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 
 <link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
-
+<link rel="import" href="../app-theme.html">
+  
 <dom-module id="tarjomeh-profile-dialog">
 
   <template>
@@ -21,46 +22,88 @@
      paper-dialog {
         width: 100vw;
         height: 100vh;
-      };
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0;
+        margin: 0;     
+        background: var(--light-primary-color);
+      }
+      
+      .language-item {
+        padding: 5px;
+      }
+      
+      .language-item:hover {
+        color: red;
+      }
+      
+      .label {
+        font-size: 12px;
+        color: var(--secondary-text-color);
+      }
+      
+      .settings-block {
+        margin: 20px;
+      }
+      
+      paper-menu-button {
+        padding: 0px;
+      }
     </style>
     
     <tarjomeh-collection id="languagesCollection" path="languages" data="{{languages}}"></tarjomeh-collection>
+    <tarjomeh-collection id="profileCollection" path="{{_computePath(user)}}" data="{{profile}}"></tarjomeh-collection>
     
     <paper-dialog id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
       <paper-toolbar>
         <div class="layout horizontal"><paper-icon-button icon="arrow-back" on-tap="_close"></paper-icon-button></div>
         <div class="title flex">Edit your profile</div>
-        <div><paper-icon-button icon="save" on-tap=""></paper-icon-button></div>
       </paper-toolbar>
       <div>
         
-      <div hidden={{!_hasAccount(user)}}>
+      <div class="settings-block" hidden={{!_hasAccount(user)}}>
         <paper-input class="flex" value="{{user.name}}" label="Change your display name"></paper-input>
       </div>
       
-      <div>
-        <div>
+      <div class="settings-block">
+      <div class="label">Pick your native language(s)</div>
+      <div class="layout horizontal flex center">
           <iron-icon icon="language"></iron-icon>
-          <template is="dom-repeat" items="{{user.nativeLanguages}}" as="nativeLanguage">
-            <span>[[nativeLanguage.name]]</span>
+          <template is="dom-repeat" items="{{user.native_languages}}" as="nativeLanguage">
+            <span language="{{nativeLanguage}}" class="language-item" on-tap="_removeNativeLanguage">[[nativeLanguage]]</span>
           </template>
-        </div>
-        <div>
-          <paper-dropdown-menu>
-            <paper-menu class="dropdown-content">
-              <template is="dom-repeat" items="[[_chooseableNativeLanguages]]" as="language">
-                <paper-item>[[language.name]]</paper-item>
+        
+         <paper-menu-button>
+            <paper-icon-button icon="add" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu id="menuNativeLanguages" class="dropdown-content" on-iron-select="_addNativeLanguage">
+              <template is="dom-repeat" items="{{_chooseableNativeLanguages}}" sort="_sort" as="language">
+                  <paper-item language="{{language}}">{{language}}</paper-item>
               </template>
             </paper-menu>
-          </paper-dropdown-menu>
-        </div>
+          </paper-menu-button>
+      </div>
       </div>
       
-      <div>
+      <div class="settings-block">
+      <div class="label">Which languages are you learning?</div>
+      <div class="layout horizontal flex center">
         <iron-icon icon="social:school"></iron-icon>
-        <template is="dom-repeat" items="{{user.learningLanguages}}" as="learningLanguage">
-            <span>[[learningLanguage.name]]</span>
+        <template is="dom-repeat" items="{{user.learning_languages}}" as="learningLanguage">
+            <span language="{{learningLanguage}}" class="language-item" on-tap="_removeLearningLanguage">[[learningLanguage]]</span>
         </template>
+        
+        <paper-menu-button>
+            <paper-icon-button icon="add" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu id="menuLearningLanguages" class="dropdown-content" on-iron-select="_addLearningLanguage">
+              <template is="dom-repeat" items="{{_chooseableLearningLanguages}}" sort="_sort" as="language">
+                  <paper-item language="{{language}}">{{language}}</paper-item>
+              </template>
+            </paper-menu>
+          </paper-menu-button>
+      </div>
       </div>
       
       </div>
@@ -73,35 +116,108 @@
       is: "tarjomeh-profile-dialog",
       properties: {
         user: {
-          type: Object,
+          type: Array,
           value: function(){
-            return {};
+            return [];
           },
-          notify: true
+          notify: true,
+          observer: '_onUserChanged'
         },
         _chooseableNativeLanguages: {
           type: Array,
-          value: function() {
-            return []
-          }
+          value: function(){
+            return [];
+          },
+          notify: true,
+          reflectToAttribute: true
+        },
+        _chooseableLearningLanguages: {
+          type: Array,
+          value: function(){
+            return [];
+          },
+          notify: true
         }
       },
       
       ready: function() {
-        this.languages.forEach(function(entry) {
-          if(this.user.nativeLanguages.indexOf(entry) > -1) {
-            this._chooseableNativeLanguages.push(entry);
-          }
-        });
+        this.$.dialog.addEventListener('iron-overlay-closed', function()  {
+          this.$.profileCollection.addToChild('profile',this.user);
+        }.bind(this)); //TODO listener/observer?
       },
       
       open: function() {
         this.$.dialog.open();
-        console.log(this.user);
       },
       
       _close: function() {
         this.$.dialog.close();
+      },
+      
+      _sort: function(languageA, languageB) {
+        return languageA < languageB ? -1 : 1;
+      },
+      
+      _onUserChanged: function() {
+        if (this.languages) {
+          this.languages.forEach(function(language) {
+            if (!this._contains(this.user.native_languages, language.value)) {
+              this.push('_chooseableNativeLanguages', language.value);
+            }
+            if (!this._contains(this.user.learning_languages, language.value)) {
+              this.push('_chooseableLearningLanguages', language.value);
+            }
+          }.bind(this));
+        }
+      },
+      
+      _contains: function(array, language) {
+        if (array) {
+          return array.indexOf(language) > -1;
+        }
+        return false;
+      },
+      
+      _addNativeLanguage: function(event) {
+        if (!this.user.native_languages) {
+          this.set('user.native_languages',[]);
+        }
+        var language = event.detail.item.language;
+        this.push('user.native_languages', language);
+        
+        var index = this._chooseableNativeLanguages.indexOf(language);
+        this.splice('_chooseableNativeLanguages', index, 1);
+        
+        this.$.menuNativeLanguages.selected = -1;
+      },
+      
+      _removeNativeLanguage: function(event) {
+        var language = event.detail.sourceEvent.currentTarget.language;
+        var index = this.user.native_languages.indexOf(language);
+        this.splice('user.native_languages', index, 1);
+        
+        this.push('_chooseableNativeLanguages', language);
+      },
+      
+      _addLearningLanguage: function(event) {
+        if (!this.user.learning_languages) {
+          this.set('user.learning_languages',[]);
+        }
+        var language = event.detail.item.language;
+        this.push('user.learning_languages', language);
+        
+        var index = this._chooseableLearningLanguages.indexOf(language);
+        this.splice('_chooseableLearningLanguages', index, 1);
+        
+        this.$.menuLearningLanguages.selected = -1;
+      },
+      
+      _removeLearningLanguage: function(event) {
+        var language = event.detail.sourceEvent.currentTarget.language;
+        var index = this.user.learning_languages.indexOf(language);
+        this.splice('user.learning_languages', index, 1);
+        
+        this.push('_chooseableLearningLanguages', language);
       },
       
       _hasAccount: function(user) {
@@ -109,6 +225,18 @@
           return user.provider === 'password';
         }
         return false;
+      },
+      
+      _empty: function(languages) {
+        return languages.length === 0;
+      },
+      
+      //TODO code duplication
+      _computePath: function(user) {
+        if (user) {
+          return 'users/' + user.uid;
+        }
+        return null;
       }
     });
   </script>

@@ -65,65 +65,58 @@
       </paper-card>
     </div>
   </template>
-
+  
   <script>
     Polymer({
       is: "tarjomeh-loginscreen",
       properties: {
-        provider: {
-          type: String,
-          value: 'password',
-          notify: true
-        },
-        params: {
-          type: Object,
-          value: function(){
-            return {};
-          },
-          notify: true
-        }
+
       },
       
       ready: function() {
-        this.$.createAccount.hidden = true;
-        this.$.loginPassword.hidden = true;
+        this._togglePassword(false);
+        this._toggleCreate(false);
       },
       
       _showCreateAccount() {
-        this.$.createAccount.hidden = false;
-        this.$.createAccountButton.hidden = true;
-        this.$.loginPassword.hidden = true;
-        this.$.loginPasswordButton.hidden = false;
+        this._togglePassword(false);
+        this._toggleCreate(true);
         this._resetInputs();
       },
       
       _showLoginPassword() {
-        this.$.loginPassword.hidden = false;
-        this.$.loginPasswordButton.hidden = true;
-        this.$.createAccount.hidden = true;
-        this.$.createAccountButton.hidden = false;
+        this._togglePassword(true);
+        this._toggleCreate(false);
         this._resetInputs();
       },
       
       _loginGoogle() {
-        this.$.createAccount.hidden = true;
-        this.$.createAccountButton.hidden = false;
-        this.$.loginPassword.hidden = true;
-        this.$.loginPasswordButton.hidden = false;
+        this._togglePassword(false);
+        this._toggleCreate(false);
         this._resetInputs();
-        this.provider = "google";
-        this.fire('login-requested', {});
+        this.fire('login-requested', {provider: 'google', params: {}});
+      },
+      
+      _togglePassword: function(show) {
+        this.$.loginPassword.hidden = !show;
+        this.$.loginPasswordButton.hidden = show;
+      },
+      
+      _toggleCreate: function(show) {
+        this.$.createAccount.hidden = !show;
+        this.$.createAccountButton.hidden = show;
       },
       
       _loginPassword: function() {
-        this.params = { "email": this.email, "password": this.password};
-        this.email = "";
-        this.password = "";
-        this.provider = "password";
-        this.fire('login-requested', {});
+        this._togglePassword(false);
+        this._toggleCreate(false);
+        this.fire('login-requested', {provider: 'password', params: { "email": this.email, "password": this.password}});
+        this._resetInputs();
       },
       
       _createUser: function() {
+        this._togglePassword(false);
+        this._toggleCreate(false);
         this.fire('create-user-requested', {emailCreate: this.emailCreate, passwordCreate: this.passwordCreate});
         this._resetInputs();
       },

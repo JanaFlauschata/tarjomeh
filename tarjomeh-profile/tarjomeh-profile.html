@@ -10,7 +10,7 @@
        
     </style>
     
-    <tarjomeh-collection id="profileCollection" path="{{_computePath(fbUser)}}" data="{{profiles}}"></tarjomeh-collection>
+    <tarjomeh-collection id="profileCollection" path="{{_computePath(fbUser)}}" data="{{profile}}"></tarjomeh-collection>
     
   </template>
 
@@ -22,11 +22,10 @@
           type: Object,
           value: function(){
             return {};
-          },
-          notify: true
+          }
         },
         user: {
-         type: Object,
+          type: Object,
           value: function(){
             return {};
           },
@@ -35,30 +34,28 @@
       },
       
       ready: function() {
-        console.log(this.$.profileCollection.path);
-        
+         
         //TODO refactor
         this.$.profileCollection.$.fbCollection.query.once("value", function(snapshot) {     
           
-          this.user = this.$.profileCollection.getByKey('profile');
-          console.log(this.user); 
-          if (!this.user) {
+          if (this.profile.length === 0) {
             this.user = {};
             this.user.uid = this.fbUser.uid;
             this.user.provider = this.fbUser.provider;
-          };
+          }
+          else {
+            this.user = this.profile[0];
+          }
           
-          //TDO refactor
+          //TODO refactor
           this.user.__firebaseKey__ = null;
           
           switch(this.user.provider) {
           case 'password':
-            this.user.name = 'no displayname';
-            this.user.imageUrl = '';
             break;
           case 'google':
             this.user.name = this.fbUser.google.displayName;
-            this.user.imageUrl = this.fbUser.google.profileImageURL;
+            this.user.imageurl = this.fbUser.google.profileImageURL;
             break;
           default:
             throw 'Unknown provider: ' + this.user.provider;
@@ -66,7 +63,6 @@
         
           this.$.profileCollection.addToChild('profile',this.user);
 
-          console.log(this.user);  
         }.bind(this), function (errorObject) {
           throw 'Profile could not be read!';
         });
@@ -75,9 +71,8 @@
       
       _computePath: function(fbUser) {
         if (fbUser) {
-          return 'profiles/' + fbUser.uid;
+          return 'users/' + fbUser.uid;
         }
-        throw 'fbUser is null!';
         return null;
       }
       

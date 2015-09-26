@@ -10,7 +10,7 @@
     <style>
     </style>
     
-    <firebase-collection id="fbCollection" location="{{_computePath(path)}}" data="{{data}}"></firebase-collection>
+    <firebase-collection id="fbCollection" location="{{_computePath(path)}}" data="{{data}}" order-by-child="{{orderByChild}}" order-by-value="{{orderByValue}}"></firebase-collection>
     
   </template>
 
@@ -18,14 +18,27 @@
     Polymer({
       is: "tarjomeh-collection",
       properties: {
+         data: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
+        },
         path: {
           type: String,
-          value: ''
-        },
-        data: {
-          type: Array,
-          value: [],
+          value: '',
           notify: true
+        },
+        orderByChild: {
+          type: String,
+          value: null,
+          reflectToAttribute: true
+        },
+        orderByValue: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
         }
       },
       
@@ -43,6 +56,14 @@
       
       removeByKey: function(key) {
         this.$.fbCollection.removeByKey(key);
+      },
+      
+      getByKey: function(key) {
+        return this.$.fbCollection.getByKey(key);
+      },
+      
+      addToChild: function(child, entry) {
+        this.$.fbCollection.query.child(child).set(entry);
       }
     });
   </script>
