@@ -11,6 +11,7 @@
     </style>
     
     <firebase-collection id="fbCollection" location="{{_computePath(path)}}" data="{{data}}" order-by-child="{{orderByChild}}" order-by-value="{{orderByValue}}"></firebase-collection>
+    <firebase-collection id="profileCollection" location="{{_computeProfilePath(userUid)}}"></firebase-collection>
     
   </template>
 
@@ -30,6 +31,10 @@
           value: '',
           notify: true
         },
+        userUid: {
+          type: String,
+          value: ''
+        },
         orderByChild: {
           type: String,
           value: null,
@@ -46,24 +51,41 @@
         return 'https://radiant-inferno-3701.firebaseio.com/' + path;
       },
       
+      _computeProfilePath: function(uid) {
+        if (uid) {
+          return 'https://radiant-inferno-3701.firebaseio.com/users/' + uid + '/profile';
+        }
+      },
+      
+      _saveTimestamp: function() {
+        if (this.userUid) {
+          this.$.profileCollection.query.child('last_active').set(Firebase.ServerValue.TIMESTAMP);
+        }
+      },
+      
       add: function(entry) {
         this.$.fbCollection.add(entry);
+        this._saveTimestamp();
       },
       
       remove: function(entry) {
         this.$.fbCollection.remove(entry);
+        this._saveTimestamp();
       },
       
       removeByKey: function(key) {
         this.$.fbCollection.removeByKey(key);
+        this._saveTimestamp();
       },
       
       getByKey: function(key) {
         return this.$.fbCollection.getByKey(key);
+        this._saveTimestamp();
       },
       
       addToChild: function(child, entry) {
         this.$.fbCollection.query.child(child).set(entry);
+        this._saveTimestamp();
       }
     });
   </script>

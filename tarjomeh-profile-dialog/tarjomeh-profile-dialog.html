@@ -55,19 +55,19 @@
     </style>
     
     <tarjomeh-collection id="languagesCollection" path="languages" data="{{languages}}"></tarjomeh-collection>
-    <tarjomeh-collection id="profileCollection" path="{{_computePath(user)}}" data="{{profile}}"></tarjomeh-collection>
+    <tarjomeh-collection id="profileCollection" path="{{_computePath(user.uid)}}" data="{{profile}}" user-uid="{{user.uid}}"></tarjomeh-collection>
     
-    <paper-dialog id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+    <paper-dialog id="dialog" on-iron-overlay-closed="_saveProfile" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
       <paper-toolbar>
         <div class="layout horizontal"><paper-icon-button icon="arrow-back" on-tap="_close"></paper-icon-button></div>
         <div class="title flex">Edit your profile</div>
       </paper-toolbar>
-      <div>
         
       <div class="settings-block" hidden={{!_hasAccount(user)}}>
-        <paper-input class="flex" value="{{user.name}}" label="Change your display name"></paper-input>
+       <paper-input class="flex" value="{{user.name}}" label="Change your display name"></paper-input>
       </div>
       
+      <!--TODO extract to a polymer element -->
       <div class="settings-block">
       <div class="label">Pick your native language(s)</div>
       <div class="layout horizontal flex center">
@@ -76,10 +76,10 @@
             <span language="{{nativeLanguage}}" class="language-item" on-tap="_removeNativeLanguage">[[nativeLanguage]]</span>
           </template>
         
-         <paper-menu-button>
+         <paper-menu-button id="menuButtonNativeLanguages">
             <paper-icon-button icon="add" class="dropdown-trigger"></paper-icon-button>
             <paper-menu id="menuNativeLanguages" class="dropdown-content" on-iron-select="_addNativeLanguage">
-              <template is="dom-repeat" items="{{_chooseableNativeLanguages}}" sort="_sort" as="language">
+              <template is="dom-repeat" items="{{_chooseableLanguages}}" sort="_sort" as="language">
                   <paper-item language="{{language}}">{{language}}</paper-item>
               </template>
             </paper-menu>
@@ -95,10 +95,10 @@
             <span language="{{learningLanguage}}" class="language-item" on-tap="_removeLearningLanguage">[[learningLanguage]]</span>
         </template>
         
-        <paper-menu-button>
+        <paper-menu-button id="menuButtonLearningLanguages">
             <paper-icon-button icon="add" class="dropdown-trigger"></paper-icon-button>
             <paper-menu id="menuLearningLanguages" class="dropdown-content" on-iron-select="_addLearningLanguage">
-              <template is="dom-repeat" items="{{_chooseableLearningLanguages}}" sort="_sort" as="language">
+              <template is="dom-repeat" items="{{_chooseableLanguages}}" sort="_sort" as="language">
                   <paper-item language="{{language}}">{{language}}</paper-item>
               </template>
             </paper-menu>
@@ -106,7 +106,6 @@
       </div>
       </div>
       
-      </div>
     </paper-dialog>
     
   </template>
@@ -121,29 +120,19 @@
             return [];
           },
           notify: true,
-          observer: '_onUserChanged'
+          observer: '_initialize'
         },
-        _chooseableNativeLanguages: {
+        _chooseableLanguages: {
           type: Array,
           value: function(){
             return [];
           },
           notify: true,
-          reflectToAttribute: true
-        },
-        _chooseableLearningLanguages: {
-          type: Array,
-          value: function(){
-            return [];
-          },
-          notify: true
         }
       },
       
       ready: function() {
-        this.$.dialog.addEventListener('iron-overlay-closed', function()  {
-          this.$.profileCollection.addToChild('profile',this.user);
-        }.bind(this)); //TODO listener/observer?
+        this.$.languagesCollection.$.fbCollection.query.once("value", this._initialize.bind(this)); //TODO besser machen
       },
       
       open: function() {
@@ -158,16 +147,21 @@
         return languageA < languageB ? -1 : 1;
       },
       
-      _onUserChanged: function() {
-        if (this.languages) {
+      _saveProfile: function(event) {
+        if (event.target.id === 'dialog') { //TODO do better (-> done this to prevent firing from children)
+          this.$.profileCollection.addToChild('profile',this.user);
+          console.log('saved profile to ' + this.$.profileCollection.path + ' for user: ' + this.user.uid);
+        }
+      },
+      
+      _initialize: function() {
+        if (this.languages && this.languages.length > 0 &&  this.user && Object.keys(this.user).length > 0) {
           this.languages.forEach(function(language) {
-            if (!this._contains(this.user.native_languages, language.value)) {
-              this.push('_chooseableNativeLanguages', language.value);
-            }
-            if (!this._contains(this.user.learning_languages, language.value)) {
-              this.push('_chooseableLearningLanguages', language.value);
+            if (!this._contains(this.user.native_languages, language.value) && !this._contains(this.user.learning_languages, language.value)) {
+              this.push('_chooseableLanguages', language.value);
             }
           }.bind(this));
+          this._updateMenuButtonStates();
         }
       },
       
@@ -185,18 +179,20 @@
         var language = event.detail.item.language;
         this.push('user.native_languages', language);
         
-        var index = this._chooseableNativeLanguages.indexOf(language);
-        this.splice('_chooseableNativeLanguages', index, 1);
+        var index = this._chooseableLanguages.indexOf(language);
+        this.splice('_chooseableLanguages', index, 1);
+        this._updateMenuButtonStates();
         
         this.$.menuNativeLanguages.selected = -1;
       },
       
       _removeNativeLanguage: function(event) {
-        var language = event.detail.sourceEvent.currentTarget.language;
+        var language = event.detail.sourceEvent.target.language;
         var index = this.user.native_languages.indexOf(language);
         this.splice('user.native_languages', index, 1);
         
-        this.push('_chooseableNativeLanguages', language);
+        this.push('_chooseableLanguages', language);
+        this._updateMenuButtonStates();
       },
       
       _addLearningLanguage: function(event) {
@@ -206,18 +202,20 @@
         var language = event.detail.item.language;
         this.push('user.learning_languages', language);
         
-        var index = this._chooseableLearningLanguages.indexOf(language);
-        this.splice('_chooseableLearningLanguages', index, 1);
+        var index = this._chooseableLanguages.indexOf(language);
+        this.splice('_chooseableLanguages', index, 1);
+        this._updateMenuButtonStates();
         
         this.$.menuLearningLanguages.selected = -1;
       },
       
       _removeLearningLanguage: function(event) {
-        var language = event.detail.sourceEvent.currentTarget.language;
+        var language = event.detail.sourceEvent.target.language;
         var index = this.user.learning_languages.indexOf(language);
         this.splice('user.learning_languages', index, 1);
         
-        this.push('_chooseableLearningLanguages', language);
+        this.push('_chooseableLanguages', language);
+        this._updateMenuButtonStates(); 
       },
       
       _hasAccount: function(user) {
@@ -227,14 +225,15 @@
         return false;
       },
       
-      _empty: function(languages) {
-        return languages.length === 0;
+      _updateMenuButtonStates: function() {
+        this.$.menuButtonNativeLanguages.hidden = this._chooseableLanguages.length === 0? true : false;
+        this.$.menuButtonLearningLanguages.hidden = this._chooseableLanguages.length === 0? true : false;
       },
       
       //TODO code duplication
-      _computePath: function(user) {
-        if (user) {
-          return 'users/' + user.uid;
+      _computePath: function(uid) {
+        if (uid) {
+          return 'users/' + uid;
         }
         return null;
       }

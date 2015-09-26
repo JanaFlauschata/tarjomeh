@@ -10,9 +10,9 @@
 
     <style>
     </style>
-    <firebase-auth id="fbAuth" user="{{fbUser}}" location="https://radiant-inferno-3701.firebaseio.com" provider={{provider}} params={{params}} on-error="_errorHandler" redirect></firebase-auth>
     
-    <!--<tarjomeh-collection id="userCollection" path="users"></tarjomeh-collection>-->
+    <firebase-auth id="fbAuth" user="{{fbUser}}" location="https://radiant-inferno-3701.firebaseio.com" provider={{provider}} params={{params}} on-error="_errorHandler" redirect></firebase-auth>
+    <tarjomeh-collection id="userCollection" path="logins"></tarjomeh-collection>
 
   </template>
 
@@ -45,7 +45,7 @@
       },
   
       logout : function() {
-        //this.$.userCollection.removeByKey(this.fbUser.uid);
+        this.$.userCollection.removeByKey(this.fbUser.uid);
         this.$.fbAuth.logout();
         //this.fbUser = null; //TODO ?
       },  
@@ -55,7 +55,7 @@
       },
       
       _processLogin : function(event) {
-        //this.$.userCollection.addToChild(this.fbUser.uid,this.fbUser.expires);
+        this.$.userCollection.addToChild(this.fbUser.uid,this.fbUser.expires);
         console.log('login succeeded!');
 
       },
