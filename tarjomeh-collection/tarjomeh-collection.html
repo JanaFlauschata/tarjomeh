@@ -11,7 +11,7 @@
     </style>
     
     <firebase-collection id="fbCollection" location="{{_computePath(path)}}" data="{{data}}" order-by-child="{{orderByChild}}" order-by-value="{{orderByValue}}"></firebase-collection>
-    <firebase-collection id="profileCollection" location="{{_computeProfilePath(userUid)}}"></firebase-collection>
+    <!--<firebase-collection id="profileCollection" location="{{_computeProfilePath(userUid)}}"></firebase-collection>-->
     
   </template>
 
@@ -47,19 +47,29 @@
         }
       },
       
+      ready: function() {
+         /*this.$.fbCollection.query.once("value", function(snapshot) {
+           this.data = this.$.fbCollection.data;
+           this.fire('loaded', {data: this.$.fbCollection.data, path: this.path});
+         }.bind(this));*/
+      },
+      
       _computePath: function(path) {
-        return 'https://radiant-inferno-3701.firebaseio.com/' + path;
+        if (path !== '' && typeof path !== 'undefined') {
+          return 'https://radiant-inferno-3701.firebaseio.com/' + path;
+        }
+        return null;
       },
       
       _computeProfilePath: function(uid) {
-        if (uid) {
+        if (uid != '') {
           return 'https://radiant-inferno-3701.firebaseio.com/users/' + uid + '/profile';
         }
       },
       
       _saveTimestamp: function() {
         if (this.userUid) {
-          this.$.profileCollection.query.child('last_active').set(Firebase.ServerValue.TIMESTAMP);
+          //this.$.profileCollection.query.child('last_active').set(Firebase.ServerValue.TIMESTAMP);
         }
       },
       

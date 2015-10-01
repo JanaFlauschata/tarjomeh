@@ -5,6 +5,9 @@
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../tarjomeh-profile/tarjomeh-profile.html">
+
 <link rel="import" href="../app-theme.html">
 
 <dom-module id="tarjomeh-userlist-entry">
@@ -42,19 +45,21 @@
 	    }
     </style>
     
+    <tarjomeh-profile uid="[[uid]]" profile="{{profile}}"></tarjomeh-profile>
+    
     <div class="layout horizontal">
-      <div class="avatar" style$="[[_computeImgStyle(imageurl)]]"></div>
+      <div class="avatar" style$="[[_computeImgStyle(profile.imageurl)]]"></div>
       <div class="flex">
-        <div class="name">[[username]]</div>
+        <div class="name">[[profile.name]]</div>
         <div class="flex"></div>
         <div class="language">
           <iron-icon icon="language"></iron-icon>
-          <template is="dom-repeat" items="[[nativeLanguages]]" as="nativeLanguage">
-            <span>[[nativeLanguage.name]]</span>
+          <template is="dom-repeat" items="[[profile.native_languages]]" as="nativeLanguage">
+            <span>[[nativeLanguage]]</span>
           </template>
           <iron-icon icon="social:school"></iron-icon>
-          <template is="dom-repeat" items="[[learningLanguages]]" as="learningLanguage">
-            <span>[[learningLanguage.name]]</span>
+          <template is="dom-repeat" items="[[profile.learning_languages]]" as="learningLanguage">
+            <span>[[learningLanguage]]</span>
           </template>
         </div>
       </div>
@@ -68,26 +73,25 @@
     Polymer({
       is: "tarjomeh-userlist-entry",
       properties: {
-        username: {
+        uid: {
           type: String,
-          value: 'unknown user'
+          value: '',
+          reflectToAttribute: true
         },
-        imageUrl: {
-          type: String,
-          value: ''
-        },
-        nativeLanguages: {
-          type: Array,
-          value: [{name: 'no languages specified yet'}]
-        },
-        learningLanguages: {
-          type: Array,
-          value: [{name: 'no languages specified yet'}]
+        profile: {
+          type: Object,
+          value: function(){
+            return {};
+          },
+          notify: true
         }
       },
       
       _computeImgStyle : function(imageurl) {
-        return 'background-image: url(' + imageurl + ')';
+        if (imageurl) {
+          return 'background-image: url(' + imageurl + ')';
+        }
+        return null;
       }
     });
   </script>

@@ -1,0 +1,98 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+  <link rel="import" href="../bower_components/paper-input/paper-input.html">
+  <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+  
+  <link rel="import" href="../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+  <link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+  <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+  <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+  <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+  <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+  <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+    <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+    <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+     
+     <link rel="import" href="../app-theme.html">
+  
+ <link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
+  <link rel="import" href="../tarjomeh-profile/tarjomeh-profile.html">
+  <link rel="import" href="../tarjomeh-sidebar/tarjomeh-sidebar.html">
+  <link rel="import" href="../tarjomeh-game/tarjomeh-game.html">
+
+<dom-module id="tarjomeh-app">
+
+  <template>
+
+    <style>
+       :host {
+         font-family: 'Roboto', 'Noto', sans-serif;
+      }
+    </style>
+
+    <tarjomeh-profile uid="[[fbUser.uid]]" fb-user="[[fbUser]]" profile="{{user}}"></tarjomeh-profile>
+        
+    <!--<tarjomeh-collection id="dataConnection" path="messages" data="{{messages}}"></tarjomeh-collection>-->
+
+  <paper-drawer-panel>
+     <tarjomeh-sidebar user="{{user}}" drawer></tarjomeh-sidebar>
+    <paper-header-panel main>
+      <paper-toolbar class="medium-tall">
+        <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+        <div class="title">Tarjomeh</div>
+        <iron-icon icon="account-circle"></iron-icon>
+        
+        <div class="bottom fit" horizontal layout>
+        <paper-tabs selected="{{_selected}}">
+          <paper-tab>Game</paper-tab>
+          <paper-tab>Archive</paper-tab>
+        </paper-tabs>
+        </div>
+        
+      </paper-toolbar>
+      <iron-pages selected="{{_selected}}">
+        <div>
+            <tarjomeh-game user="{{user}}"></tarjomeh-game>
+        </div>
+        
+       <div>
+          <!--<template is="dom-repeat" items="[[messages]]" as="message">
+            <div class="layout horizontal" style="padding: 16px">
+             <div class="avatar" style$="[[computeImgStyle(message.img)]]"></div>
+              <div flex>
+              <div>[[message.name]]</div>
+              <div>[[message.text]]</div>
+              </div>
+            </div>
+        </template>
+           <div class="send-message layout horizontal">
+              <paper-input flex label="Type message..." id="input" value="{{input}}"></paper-input>
+              <paper-fab icon="send" id="sendButton" on-tap="sendMessage"></paper-fab>
+            </div>-->
+        </div>
+      </iron-pages>
+    </paper-header-panel>
+  </paper-drawer-panel>
+ </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-app",
+      properties: {
+        fbUser: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
+        _selected: {
+          type: Number,
+          value: 0,
+          notify: true
+        }
+      }
+      
+    });
+  </script>
+
+</dom-module>

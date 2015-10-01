@@ -29,7 +29,6 @@
         bottom: 0;
         padding: 0;
         margin: 0;     
-        background: var(--light-primary-color);
       }
       
       .language-item {
@@ -59,7 +58,7 @@
     
     <paper-dialog id="dialog" on-iron-overlay-closed="_saveProfile" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
       <paper-toolbar>
-        <div class="layout horizontal"><paper-icon-button icon="arrow-back" on-tap="_close"></paper-icon-button></div>
+        <div class="layout horizontal"><paper-icon-button icon="arrow-back" on-tap="_close"></paper-icon-button></div> //TODO dialog dismiss statt function
         <div class="title flex">Edit your profile</div>
       </paper-toolbar>
         

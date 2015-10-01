@@ -1,0 +1,93 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../tarjomeh-userlist-entry/tarjomeh-userlist-entry.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-translation">
+
+  <template>
+
+    <style>
+      .dialog-large {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 10px;
+        box-shadow: none;
+      }
+      
+      .dialog-small {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0;
+        margin: 0;   
+        box-shadow: none;
+      }
+    </style>
+
+    <tarjomeh-userlist-entry uid="[[uid]]" profile="{{profile}}" on-tap="_showDialog"></tarjomeh-userlist-entry>
+    <paper-dialog id="dialog" fit-into=[[fitInto]]>
+    
+      <paper-toolbar hidden="{{!_isDialogFullscreen(fitInto)}}">
+        <div class="layout horizontal"><paper-icon-button icon="arrow-back" on-tap="_closeDialog"></paper-icon-button></div> //TODO dialog dismiss statt function
+        <div class="title flex">Game</div>
+      </paper-toolbar>  
+      
+      Play a translation game with <span>[[profile.name]]</span>
+    </paper-dialog>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-translation",
+      properties: {
+        uid: {
+          type: String,
+          value: ''
+        },
+        fitInto: {
+          type: Object,
+          value: window,
+          observer: 'fitIntoChanged'
+        }
+      },
+      
+      fitIntoChanged: function() {
+        if (this.fitInto === window) { //TOOD function call
+          this.toggleClass('dialog-large', false, this.$.dialog);
+          this.toggleClass('dialog-small', true, this.$.dialog);
+        }
+        else {
+          this.toggleClass('dialog-large', true, this.$.dialog);
+          this.toggleClass('dialog-small', false, this.$.dialog);
+        }
+      },
+      
+      _isDialogFullscreen: function(fitInto) {
+        return fitInto === window;
+      },
+      
+      _showDialog: function() {
+        this.$.dialog.open();
+      },
+      
+      _closeDialog: function() {
+        this.$.dialog.close();
+      }
+      
+    });
+  </script>
+
+</dom-module>

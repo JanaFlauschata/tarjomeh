@@ -1,0 +1,88 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+
+<link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
+<link rel="import" href="../tarjomeh-translation/tarjomeh-translation.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-game">
+
+  <template>
+
+    <style>
+      tarjomeh-userlist-entry {
+        border-bottom: 1px solid #e0e0e0;
+      }
+      
+      tarjomeh-userlist-entry:last-of-type {
+        border-bottom: 0px;
+      } 
+      
+      .userlist {
+        /*position: absolute;
+        border-right: 1px solid #e0e0e0;
+        height: 100%;*/
+      }
+    </style>
+    
+    <iron-media-query query="(min-width: 600px)" query-matches="{{_queryMatches}}"></iron-media-query>
+    
+    <tarjomeh-collection id="loginsCollection" path="logins" data="{{logins}}" user-uid="{{user.uid}}"></tarjomeh-collection>
+    
+    <div class="layout horizontal">
+      <div class="layout vertical userlist">
+          <template is="dom-repeat" items="[[logins]]" as="login">
+             <tarjomeh-translation uid="[[login.__firebaseKey__]]" hidden="{{_isOwnUser(user,login.__firebaseKey__)}}" fit-into="[[fitInto]]"></tarjomeh-translation>
+          </template>
+      </div>
+      
+      <div id="fitDiv" class="flex"></div>
+    </div>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-game",
+      properties: {
+        user: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          notify: true
+        },
+        _selected: {
+          type: Number,
+          notify: true
+        },
+        _queryMatches: {
+          type: Boolean,
+          observer: '_queryMatchesChanged'
+        }
+      },
+      
+      ready: function() {
+        //this.fitInto = this.$.fitDiv;
+      },
+      
+      _queryMatchesChanged: function() {
+        this.fitInto = this._queryMatches? this.$.fitDiv : window;
+      },
+      
+      _isOwnUser: function (user, uid) {
+        if (user && user.uid) return user.uid === uid;
+        return false;
+      },
+      
+      _computeCollectionId: function(key) {
+        return 'profileCollection_' + key;
+      }
+      
+    });
+  </script>
+
+</dom-module>

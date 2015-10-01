@@ -33,7 +33,7 @@
  <link rel="import" href="tarjomeh-collection/tarjomeh-collection.html">
   <link rel="import" href="tarjomeh-profile/tarjomeh-profile.html">
   <link rel="import" href="tarjomeh-sidebar/tarjomeh-sidebar.html">
-  
+  <link rel="import" href="tarjomeh-app/tarjomeh-app.html">
 
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -51,56 +51,9 @@
         <tarjomeh-loginscreen provider="{{provider}}" params="{{params}}"></tarjomeh-loginscreen>
       </div>
       
-     <template is="dom-if" if="{{fbUser.uid}}" restamp hidden={{!loggedIn(fbUser)}}> <!-- find out why that does not work with password auth... check whether it works with the firebase collection for profile loading-->
-       <div hidden="{{!loggedIn(fbUser)}}">
-       <tarjomeh-profile fb-user="[[fbUser]]" user="{{user}}"></tarjomeh-profile>
-        
-    <tarjomeh-collection id="dataConnection" path="messages" data="{{messages}}"></tarjomeh-collection>
-
-  <paper-drawer-panel>
-     <tarjomeh-sidebar user="{{user}}" drawer></tarjomeh-sidebar>
-    <paper-header-panel main>
-      <paper-toolbar class="medium-tall">
-        <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-        <div class="title">Tarjomeh</div>
-        <iron-icon icon="account-circle"></iron-icon>
-        
-        <div class="bottom fit" horizontal layout>
-        <paper-tabs selected="{{selected}}">
-          <paper-tab>Empty</paper-tab>
-          <paper-tab>Chat</paper-tab>
-        </paper-tabs>
-        </div>
-        
-      </paper-toolbar>
-      <iron-pages selected="{{selected}}">
-        <div>
-         <div>{{user.uid}}</div>
-         <div>{{user.name}}</div>
-         <div>{{user.imageurl}}</div>
-         <div>{{user.provider}}</div>
-        </div>
-        
-       <div>
-          <template is="dom-repeat" items="[[messages]]" as="message">
-            <div class="layout horizontal" style="padding: 16px">
-             <div class="avatar" style$="[[computeImgStyle(message.img)]]"></div>
-              <div flex>
-              <div>[[message.name]]</div>
-              <div>[[message.text]]</div>
-              </div>
-            </div>
-        </template>
-           <div class="send-message layout horizontal">
-              <paper-input flex label="Type message..." id="input" value="{{input}}"></paper-input>
-              <paper-fab icon="send" id="sendButton" on-tap="sendMessage"></paper-fab>
-            </div>
-        </div>
-      </iron-pages>
-    </paper-header-panel>
-  </paper-drawer-panel>
-  </div>
-</template>
+     <template is="dom-if" if="{{fbUser.uid}}" restamp>
+        <tarjomeh-app fb-user="{{fbUser}}"></tarjomeh-app>
+      </template>
 </template>
 </body>
 <script>
@@ -110,7 +63,6 @@
  var auth = document.querySelector('#auth');
 
  document.addEventListener('WebComponentsReady', function () {
-    template.selected = 0;
     template.input = '';
     //dataConnection = document.querySelector('#dataConnection');
     auth = document.querySelector('#auth');
