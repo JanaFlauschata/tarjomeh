@@ -10,6 +10,8 @@
 
 <link rel="import" href="../app-theme.html">
 
+<script src="../bower_components/moment/moment.js"></script>
+
 <dom-module id="tarjomeh-userlist-entry">
 
   <template>
@@ -64,6 +66,7 @@
         </div>
       </div>
       <div>
+        online <span>{{_timeago}}</span>
         <iron-icon icon="hardware:keyboard-arrow-down"></iron-icon>
       </div>
     </div>
@@ -75,7 +78,6 @@
       properties: {
         uid: {
           type: String,
-          value: '',
           reflectToAttribute: true
         },
         profile: {
@@ -87,12 +89,35 @@
         }
       },
       
-      _computeImgStyle : function(imageurl) {
+      observers: [
+        '_lastActiveChanged(profile.last_active)'
+      ],
+      
+      _lastActiveChanged: function(last_active) {
+        if (typeof last_active !== 'undefined') {
+          this._timeago = moment(last_active).fromNow();
+          setInterval(function(){
+              this._timeago = moment(this.profile.last_active).fromNow();
+            }.bind(this), 1000);
+          }
+      },
+      
+      _computeImgStyle: function(imageurl) {
         if (imageurl) {
           return 'background-image: url(' + imageurl + ')';
         }
         return null;
-      }
+      },
+      
+      /*_computeTimeago: function(timestamp) {
+        if (typeof timestamp !== 'undefined') {
+          setInterval(function(){
+            this.
+          }, 1000);
+          return moment(timestamp).fromNow();
+        }
+        return null;
+      }*/
     });
   </script>
 

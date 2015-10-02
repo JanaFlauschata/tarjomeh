@@ -40,7 +40,7 @@
     <paper-dialog id="dialog" fit-into=[[fitInto]]>
     
       <paper-toolbar hidden="{{!_isDialogFullscreen(fitInto)}}">
-        <div class="layout horizontal"><paper-icon-button icon="arrow-back" on-tap="_closeDialog"></paper-icon-button></div> //TODO dialog dismiss statt function
+        <div class="layout horizontal"><paper-icon-button icon="arrow-back" dialog-dismiss></paper-icon-button></div>
         <div class="title flex">Game</div>
       </paper-toolbar>  
       
@@ -81,10 +81,6 @@
       
       _showDialog: function() {
         this.$.dialog.open();
-      },
-      
-      _closeDialog: function() {
-        this.$.dialog.close();
       }
       
     });

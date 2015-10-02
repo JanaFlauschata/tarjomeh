@@ -55,18 +55,10 @@
           },
           notify: true
         },
-        _selected: {
-          type: Number,
-          notify: true
-        },
         _queryMatches: {
           type: Boolean,
           observer: '_queryMatchesChanged'
         }
-      },
-      
-      ready: function() {
-        //this.fitInto = this.$.fitDiv;
       },
       
       _queryMatchesChanged: function() {

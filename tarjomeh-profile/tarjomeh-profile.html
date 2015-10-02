@@ -10,8 +10,7 @@
        
     </style>
     
-    <!--TODO add user-uid="{{fbUser.uid}}" again -->
-    <tarjomeh-collection id="profileCollection" path="{{_computeBlaPath(uid)}}" data="{{data}}"></tarjomeh-collection>
+    <tarjomeh-collection id="profileCollection" path="{{_computePath(uid)}}" data="{{data}}" user-uid="[[fbUser.uid]]"></tarjomeh-collection>
     
   </template>
 
@@ -50,7 +49,8 @@
             }
           }
           else {
-            this.profile = this.data[0];
+            //this.profile = this.data[0];
+            this.profile = this.$.profileCollection.getByKey('profile');
           }
           
           //TODO refactor
@@ -74,11 +74,16 @@
           throw 'Profile could not be read!';
         });
       
+        this.$.profileCollection.$.fbCollection.query.on("value", function(snapshot) {
+            //console.log('value event');
+            this.profile = this.$.profileCollection.getByKey('profile');
+        }.bind(this));
+        
       },
       
-      _computeBlaPath: function(bla) {
-        if (bla !== '' && typeof bla !== 'undefined') {
-          return 'users/' + bla;
+      _computePath: function(uid) {
+        if (uid !== '' && typeof uid !== 'undefined') {
+          return 'users/' + uid;
         }
         return null;
       }

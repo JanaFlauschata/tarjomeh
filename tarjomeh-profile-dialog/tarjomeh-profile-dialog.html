@@ -128,10 +128,19 @@
           },
           notify: true,
         }
+        /*,
+        languages: { //TODO private
+          type: Array,
+          value: function(){
+            return [];
+          },
+          notify: true,
+          observer: '_initialize'
+        }*/
       },
       
       ready: function() {
-        this.$.languagesCollection.$.fbCollection.query.once("value", this._initialize.bind(this)); //TODO besser machen
+        this.$.languagesCollection.$.fbCollection.query.once("value", this._initialize.bind(this)); //TODO besser machen, observer?
       },
       
       open: function() {
@@ -154,7 +163,7 @@
       },
       
       _initialize: function() {
-        if (this.languages && this.languages.length > 0 &&  this.user && Object.keys(this.user).length > 0) {
+        if (this.languages && this.languages.length > 0 &&  this.user && Object.keys(this.user).length > 0 && this._chooseableLanguages.length === 0) { //RODO besser machen
           this.languages.forEach(function(language) {
             if (!this._contains(this.user.native_languages, language.value) && !this._contains(this.user.learning_languages, language.value)) {
               this.push('_chooseableLanguages', language.value);
