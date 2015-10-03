@@ -74,7 +74,7 @@
           throw 'Profile could not be read!';
         });
       
-        this.$.profileCollection.$.fbCollection.query.on("value", function(snapshot) {
+        this.$.profileCollection.$.fbCollection.query.on("value", function(snapshot) { //TODO refactor!!!
             //console.log('value event');
             this.profile = this.$.profileCollection.getByKey('profile');
         }.bind(this));

@@ -1,0 +1,63 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-collapse">
+
+  <template>
+
+    <style>
+      .heading {
+        padding: 10px 15px;
+        margin: 0px 10px 0px 10px;
+        background-color: #e0e0e0;
+        border: 1px solid #e0e0e0;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        cursor: pointer;
+        font-size: 18px;
+      }
+      
+      .content {
+        padding: 15px;
+        border: 1px solid #e0e0e0;
+        border-top: none;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+      }
+      
+      iron-collapse {
+        margin: 0px 10px 0px 10px;
+        padding: 0px 0px 0px 0px;
+      }
+    </style>
+
+      <div class="heading layout horizontal" on-click="_toggle">
+        <content select=".title"></content>
+        <div class="flex"></div>
+        <div><iron-icon icon="hardware:keyboard-arrow-down"></iron-icon></div>
+      </div>
+      <iron-collapse id="collapse">
+        <div class="content"><content select=".content"></content></div>
+      </iron-collapse>
+      
+    </paper-dialog>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-collapse",
+
+      _toggle: function() {
+        this.$.collapse.toggle();
+      }
+      
+    });
+  </script>
+
+</dom-module>

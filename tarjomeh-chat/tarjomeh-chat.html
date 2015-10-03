@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../tarjomeh-collapse/tarjomeh-collapse.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-chat">
+
+  <template>
+
+    <style>
+      .input {
+        
+      }
+    </style>
+
+      <tarjomeh-collapse>
+        <div class="title">Have a chat with <span>[[contactProfile.name]]</span></div>
+        <div class="content">
+          
+          <div class="input layout horizontal">
+              <paper-input flex label="Type message..." id="input" value="{{input}}"></paper-input>
+              <paper-icon-button icon="send"></paper-icon-button>
+          </div>
+          
+        </div>
+      </tarjomeh-collapse>
+  
+  </template>
+
+  <script>
+    Polymer({
+      is: "tarjomeh-chat",
+      properties: {
+        contactProfile: {
+          type: Object,
+          notify: true
+        },
+        myProfile: {
+          type: Object,
+          notify: true
+        }
+      }
+      
+    });
+  </script>
+
+</dom-module>
