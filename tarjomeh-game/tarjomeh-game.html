@@ -30,12 +30,12 @@
     
     <iron-media-query query="(min-width: 600px)" query-matches="{{_queryMatches}}"></iron-media-query>
     
-    <tarjomeh-collection id="loginsCollection" path="logins" data="{{logins}}" user-uid="{{user.uid}}"></tarjomeh-collection>
+    <tarjomeh-collection path="{{_computeFriendsPath(user.uid)}}" data="{{friends}}" user-uid="{{user.uid}}"></tarjomeh-collection>
     
     <div class="layout horizontal">
       <div class="layout vertical userlist">
-          <template is="dom-repeat" items="[[logins]]" as="login">
-             <tarjomeh-contact uid="[[login.__firebaseKey__]]" my-profile="{{user}}" hidden="{{_isOwnUser(user,login.__firebaseKey__)}}" fit-into="[[fitInto]]"></tarjomeh-contact>
+          <template is="dom-repeat" items="[[friends]]" as="friend">
+             <tarjomeh-contact friend="{{friend}}" my-profile="{{user}}" fit-into="[[fitInto]]"></tarjomeh-contact>
           </template>
       </div>
       
@@ -65,13 +65,8 @@
         this.fitInto = this._queryMatches? this.$.fitDiv : window;
       },
       
-      _isOwnUser: function (user, uid) {
-        if (user && user.uid) return user.uid === uid;
-        return false;
-      },
-      
-      _computeCollectionId: function(key) {
-        return 'profileCollection_' + key;
+      _computeFriendsPath: function(uid) {
+        return 'friends/' + uid;
       }
       
     });

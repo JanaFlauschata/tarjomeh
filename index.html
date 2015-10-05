@@ -2,112 +2,118 @@
 
 <html>
 <head>
-  <title>Tarjomeh</title>
+    <title>Tarjomeh</title>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
-  <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
 
-  <link rel="import" href="bower_components/paper-input/paper-input.html">
-  <link rel="import" href="bower_components/paper-fab/paper-fab.html">
-  
-  <link rel="import" href="bower_components/polymer/polymer.html">
-  <link rel="import" href="bower_components/paper-drawer-panel/paper-drawer-panel.html">
-  <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html">
-  <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html">
-  <link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
-   <link rel="import" href="bower_components/paper-toast/paper-toast.html">
-  <link rel="import" href="bower_components/paper-button/paper-button.html">
-  <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
-  <link rel="import" href="bower_components/iron-icon/iron-icon.html">
-  <link rel="import" href="bower_components/iron-icons/iron-icons.html">
-  <link rel="import" href="bower_components/iron-pages/iron-pages.html">
+    <link rel="import" href="bower_components/paper-input/paper-input.html">
+    <link rel="import" href="bower_components/paper-fab/paper-fab.html">
+
+    <link rel="import" href="bower_components/polymer/polymer.html">
+    <link rel="import" href="bower_components/paper-drawer-panel/paper-drawer-panel.html">
+    <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html">
+    <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html">
+    <link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
+    <link rel="import" href="bower_components/paper-toast/paper-toast.html">
+    <link rel="import" href="bower_components/paper-button/paper-button.html">
+    <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="bower_components/iron-icon/iron-icon.html">
+    <link rel="import" href="bower_components/iron-icons/iron-icons.html">
+    <link rel="import" href="bower_components/iron-pages/iron-pages.html">
     <link rel="import" href="bower_components/iron-selector/iron-selector.html">
     <link rel="import" href="bower_components/iron-flex-layout/classes/iron-flex-layout.html">
-     
-     <link rel="import" href="app-theme.html">
-  
-    <link rel="import" href="tarjomeh-loginscreen/tarjomeh-loginscreen.html">
- <link rel="import" href="tarjomeh-collection/tarjomeh-collection.html">
-  <link rel="import" href="tarjomeh-profile/tarjomeh-profile.html">
-  <link rel="import" href="tarjomeh-sidebar/tarjomeh-sidebar.html">
-  <link rel="import" href="tarjomeh-app/tarjomeh-app.html">
 
-  <link rel="stylesheet" href="styles.css">
+    <link rel="import" href="app-theme.html">
+
+    <link rel="import" href="tarjomeh-loginscreen/tarjomeh-loginscreen.html">
+    <link rel="import" href="tarjomeh-collection/tarjomeh-collection.html">
+    <link rel="import" href="tarjomeh-profile/tarjomeh-profile.html">
+    <link rel="import" href="tarjomeh-sidebar/tarjomeh-sidebar.html">
+    <link rel="import" href="tarjomeh-app/tarjomeh-app.html">
+
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body fullbleed unresolved>
 <template id="t" is="dom-bind">
-      
-      <paper-toast id="toast"></paper-toast>
-      
-      <paper-toast id="errorToast" text="{{errorMessage}}"></paper-toast>
-      
-      <tarjomeh-auth id="auth" fb-user="{{fbUser}}" provider="{{provider}}" params="{{params}}" error-message="{{errorMessage}}"></tarjomeh-auth>
 
-      <div hidden={{loggedIn(fbUser)}} class="layout horizontal center center-justified">
+    <paper-toast id="toast"></paper-toast>
+
+    <paper-toast id="errorToast" text="{{errorMessage}}"></paper-toast>
+
+    <tarjomeh-auth id="auth" fb-user="{{fbUser}}" provider="{{provider}}" params="{{params}}"
+                   error-message="{{errorMessage}}"></tarjomeh-auth>
+
+    <div hidden={{loggedIn(fbUser)}} class="layout horizontal center center-justified">
         <tarjomeh-loginscreen provider="{{provider}}" params="{{params}}"></tarjomeh-loginscreen>
-      </div>
-      
-     <template is="dom-if" if="{{fbUser.uid}}" restamp>
+    </div>
+
+    <template is="dom-if" if="{{fbUser.uid}}" restamp>
         <tarjomeh-app fb-user="{{fbUser}}"></tarjomeh-app>
-      </template>
+    </template>
 </template>
 </body>
 <script>
 
- var template = document.querySelector('#t');
- //var dataConnection = document.querySelector('#dataConnection');
- var auth = document.querySelector('#auth');
+    var template = document.querySelector('#t');
+    //var dataConnection = document.querySelector('#dataConnection');
+    var auth = document.querySelector('#auth');
 
- document.addEventListener('WebComponentsReady', function () {
-    template.input = '';
-    //dataConnection = document.querySelector('#dataConnection');
-    auth = document.querySelector('#auth');
-  });
-    
-  template.sendMessage = function (e) {
-    if(!template.input) return;
-    template.$.dataConnection.add({'uid':template.user.uid,'name':template.user.name,'img':template.user.imageurl,'text':template.input});
-    template.input = '';
-  };
+    document.addEventListener('WebComponentsReady', function () {
+        template.input = '';
+        //dataConnection = document.querySelector('#dataConnection');
+        auth = document.querySelector('#auth');
+    });
 
-document.addEventListener('logout-requested', function () {
-  template.$.auth.logout();
-  template.showToast('Goodbye!');
-});
-
-document.addEventListener('login-requested', function (event) {
-  template.$.auth.login(event.detail.provider, event.detail.params);
-});
-
-document.addEventListener('create-user-requested', function (event) {
-  template.$.auth.createUser(event.detail.emailCreate, event.detail.passwordCreate);
-});
-  
-  template.loggedIn = function(user) {
-      return user !== null && user != undefined;
+    template.sendMessage = function (e) {
+        if (!template.input) return;
+        template.$.dataConnection.add({
+            'uid': template.user.uid,
+            'name': template.user.name,
+            'img': template.user.imageurl,
+            'text': template.input
+        });
+        template.input = '';
     };
-    
-    template.computeImgStyle = function(imageUrl) {
+
+    document.addEventListener('logout-requested', function () {
+        template.$.auth.logout();
+        template.showToast('Goodbye!');
+    });
+
+    document.addEventListener('login-requested', function (event) {
+        template.$.auth.login(event.detail.provider, event.detail.params);
+    });
+
+    document.addEventListener('create-user-requested', function (event) {
+        template.$.auth.createUser(event.detail.emailCreate, event.detail.passwordCreate);
+    });
+
+    template.loggedIn = function (user) {
+        return user !== null && user != undefined;
+    };
+
+    template.computeImgStyle = function (imageUrl) {
         return 'background-image: url(' + imageUrl + ')';
-      };
-      
-      template.showToast = function(message) {
+    };
+
+    template.showToast = function (message) {
         template.$.toast.text = message;
         template.$.toast.show();
-      };
-      
-      document.addEventListener('error', function() {
+    };
+
+    document.addEventListener('error', function () {
         if (template.errorMessage !== "") {
-          template.$.errorToast.show();
+            template.$.errorToast.show();
         }
-        setTimeout(function() {
-          template.errorMessage = ""; 
+        setTimeout(function () {
+            template.errorMessage = "";
         }, 3000);
-      });
-  
+    });
+
 </script>
 </html>

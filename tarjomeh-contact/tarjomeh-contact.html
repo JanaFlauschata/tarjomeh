@@ -38,7 +38,7 @@
       }
     </style>
 
-    <tarjomeh-userlist-entry uid="[[uid]]" profile="{{contactProfile}}" on-tap="_showDialog"></tarjomeh-userlist-entry>
+    <tarjomeh-userlist-entry uid="[[friend.__firebaseKey__]]" profile="{{contactProfile}}" on-tap="_showDialog"></tarjomeh-userlist-entry>
     <paper-dialog id="dialog" fit-into=[[fitInto]]>
     
       <paper-toolbar hidden="{{!_isDialogFullscreen(fitInto)}}">
@@ -61,7 +61,7 @@
         <div class="content">Bla blupp lalala bluppiti...</div>
       </tarjomeh-collapse>
       
-      <tarjomeh-chat contact-profile="{{contactProfile}}" my-profile="{{myProfile}}"></tarjomeh-chat>
+      <tarjomeh-chat id="chat" friend="{{friend}}" contact-profile="{{contactProfile}}" my-profile="{{myProfile}}"></tarjomeh-chat>
       
     </paper-dialog>
     
@@ -71,9 +71,11 @@
     Polymer({
       is: "tarjomeh-contact",
       properties: {
-        uid: {
-          type: String,
-          value: ''
+        friend: {
+          type: Object,
+          value: function() {
+            return {}
+          }
         },
         myProfile: {
           type: Object,

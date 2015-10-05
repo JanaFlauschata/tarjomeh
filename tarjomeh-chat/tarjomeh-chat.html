@@ -1,51 +1,142 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../tarjomeh-collapse/tarjomeh-collapse.html">
+<link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 
 <link rel="import" href="../app-theme.html">
 
+<script src="../bower_components/moment/moment.js"></script>
+
 <dom-module id="tarjomeh-chat">
 
-  <template>
+    <template>
 
-    <style>
-      .input {
-        
-      }
-    </style>
+        <style>
+            .chat {
+                max-height: 250px;
+                overflow: auto;
+            }
 
-      <tarjomeh-collapse>
-        <div class="title">Have a chat with <span>[[contactProfile.name]]</span></div>
-        <div class="content">
-          
-          <div class="input layout horizontal">
-              <paper-input flex label="Type message..." id="input" value="{{input}}"></paper-input>
-              <paper-icon-button icon="send"></paper-icon-button>
-          </div>
-          
-        </div>
-      </tarjomeh-collapse>
-  
-  </template>
+            .message {
+                margin: 5px;
+                border: 1px solid;
+                border-radius: 5px;
+                padding: 5px;
+            }
 
-  <script>
-    Polymer({
-      is: "tarjomeh-chat",
-      properties: {
-        contactProfile: {
-          type: Object,
-          notify: true
-        },
-        myProfile: {
-          type: Object,
-          notify: true
-        }
-      }
-      
-    });
-  </script>
+            .right {
+                text-align: right;
+                background-color: #F8BBD0;
+                border-color: #F8BBD0;
+            }
+
+            .left {
+                background-color: #F0F4C3;
+                border-color: #F0F4C3;
+            }
+
+            .time {
+                font-size: 10px;
+            }
+
+            .input {
+
+            }
+        </style>
+
+        <tarjomeh-collection id="messagesCollection" path="{{_computeChatPath(friend.chat)}}" data="{{_messages}}"
+                             user-uid="{{myProfile.uid}}"></tarjomeh-collection>
+
+        <tarjomeh-collapse>
+            <div class="title">Have a chat with <span>[[contactProfile.name]]</span></div>
+            <div class="content" on-dom-change="_showNewest">
+
+                <div id="chat" class="chat">
+                    <template is="dom-repeat" items="[[_messages]]" as="message">
+                        <div class="layout horizontal">
+                            <div class$="{{_computeLeftFlex(message.uid)}}"></div>
+                            <div class$="{{_computeMessageClass(message.uid)}}">
+                                <div class="time">[[_computeTime(message.timestamp)]]</div>
+                                <div>[[message.text]]</div>
+                            </div>
+                            <div class$="{{_computeRightFlex(message.uid)}}"></div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="input layout horizontal">
+                    <paper-input flex label="Type message..." id="input" value="{{input}}"
+                                 on-keyup="_checkForEnter"></paper-input>
+                    <paper-icon-button icon="send" on-tap="_sendMessage"></paper-icon-button>
+                </div>
+
+            </div>
+        </tarjomeh-collapse>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: "tarjomeh-chat",
+            properties: {
+                contactProfile: {
+                    type: Object,
+                    notify: true
+                },
+                myProfile: {
+                    type: Object,
+                    notify: true
+                },
+                friend: {
+                    type: Object,
+                    notify: true
+                }
+            },
+
+            _showNewest: function () {
+                this.$.chat.scrollTop = this.$.chat.scrollHeight;
+            },
+
+            _computeChatPath: function (chatId) {
+                return 'chats/' + chatId + '/messages';
+            },
+
+            _computeMessageClass: function (uid) {
+                return uid === this.myProfile.uid ? 'message right' : 'message left';
+            },
+
+            _computeLeftFlex: function (uid) {
+                return uid === this.myProfile.uid ? 'flex' : '';
+            },
+
+            _computeRightFlex: function (uid) {
+                return uid === this.myProfile.uid ? '' : 'flex';
+            },
+
+            _computeTime: function (timestamp) {
+                return moment(timestamp).calendar();
+            },
+
+            _sendMessage: function () {
+                if (!this.input) return;
+                this.$.messagesCollection.add({
+                    'uid': this.myProfile.uid,
+                    'timestamp': Firebase.ServerValue.TIMESTAMP,
+                    'text': this.input
+                });
+                this.input = '';
+            },
+
+            _checkForEnter: function (e) {
+                if (e.keyCode === 13 || e.charCode === 13) {
+                    this._sendMessage();
+                }
+            }
+
+        });
+    </script>
 
 </dom-module>
