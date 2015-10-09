@@ -4,91 +4,96 @@
 
 <dom-module id="tarjomeh-profile">
 
-  <template>
+    <template>
 
-    <style>
-       
-    </style>
-    
-    <tarjomeh-collection id="profileCollection" path="{{_computePath(uid)}}" data="{{data}}" user-uid="[[fbUser.uid]]"></tarjomeh-collection>
-    
-  </template>
+        <style>
 
-  <script>
-    Polymer({
-      is: "tarjomeh-profile",
-      properties: {
-        uid: {
-          type: String,
-          value: ''
-        },
-        fbUser: {
-          type: Object,
-          value: function () {
-            return {};
-          }
-        },
-        profile: {
-          type: Object,
-          value: function(){
-            return {};
-          },
-          notify: true
-        }
-      },
-      
-      ready: function() {
-        //TODO refactor
-        this.$.profileCollection.$.fbCollection.query.once("value", function(snapshot) {     
-          
-          if (this.data.length === 0) {
-            this.profile = {};
-            this.profile.uid = this.fbUser.uid;
-            if (this.fbUser) {
-              this.profile.provider = this.fbUser.provider;
+        </style>
+
+        <tarjomeh-collection id="profileCollection" path="{{_computePath(uid)}}" data="{{data}}"
+                             user-uid="[[fbUser.uid]]"></tarjomeh-collection>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: "tarjomeh-profile",
+            properties: {
+                uid: {
+                    type: String,
+                    value: ''
+                },
+                fbUser: {
+                    type: Object,
+                    value: function () {
+                        return {};
+                    }
+                },
+                profile: {
+                    type: Object,
+                    value: function () {
+                        return {};
+                    },
+                    notify: true
+                }
+            },
+
+            ready: function () {
+                //TODO refactor
+                this.$.profileCollection.$.fbCollection.query.once("value", function (snapshot) {
+
+                    if (this.data.length === 0) {
+                        this.profile = {};
+                        if (this.fbUser) {
+                            this.profile.uid = this.fbUser.uid;
+                            this.profile.provider = this.fbUser.provider;
+                        }
+                    }
+                    else {
+                        //this.profile = this.data[0];
+                        this.profile = this.$.profileCollection.getByKey('profile');
+                    }
+
+                    //TODO refactor
+                    this.profile.__firebaseKey__ = null;
+
+                    if (this.fbUser.uid) { //TODO refactor
+                        switch (this.fbUser.provider) {
+                            case 'password':
+                                break;
+                            case 'google':
+                                this.profile.name = this.fbUser.google.displayName; //TODO this.set?
+                                this.profile.imageurl = this.fbUser.google.profileImageURL;
+                                break;
+                            default:
+                                throw 'Unknown provider: ' + this.fbUser.provider;
+                        }
+                    }
+                    //TODO rethink
+                    this.profile.last_logout = this.profile.last_active;
+                    this.profile.last_login = Firebase.ServerValue.TIMESTAMP;
+                    this.$.profileCollection.addToChild('profile', this.profile);
+
+
+                }.bind(this), function (errorObject) {
+                    throw 'Profile could not be read!';
+                });
+
+                this.$.profileCollection.$.fbCollection.query.on("value", function (snapshot) { //TODO refactor!!!
+                    //console.log('value event');
+                    this.profile = this.$.profileCollection.getByKey('profile');
+                }.bind(this));
+
+            },
+
+            _computePath: function (uid) {
+                if (uid !== '' && typeof uid !== 'undefined') {
+                    return 'users/' + uid;
+                }
+                return null;
             }
-          }
-          else {
-            //this.profile = this.data[0];
-            this.profile = this.$.profileCollection.getByKey('profile');
-          }
-          
-          //TODO refactor
-          this.profile.__firebaseKey__ = null;
-          
-          if (this.fbUser.uid) { //TODO refactor
-          switch(this.fbUser.provider) {
-          case 'password':
-            break;
-          case 'google':
-            this.profile.name = this.fbUser.google.displayName;
-            this.profile.imageurl = this.fbUser.google.profileImageURL;
-            break;
-          default:
-            throw 'Unknown provider: ' + this.fbUser.provider;
-          }
-          }
-        
-          this.$.profileCollection.addToChild('profile',this.profile);
-        }.bind(this), function (errorObject) {
-          throw 'Profile could not be read!';
+
         });
-      
-        this.$.profileCollection.$.fbCollection.query.on("value", function(snapshot) { //TODO refactor!!!
-            //console.log('value event');
-            this.profile = this.$.profileCollection.getByKey('profile');
-        }.bind(this));
-        
-      },
-      
-      _computePath: function(uid) {
-        if (uid !== '' && typeof uid !== 'undefined') {
-          return 'users/' + uid;
-        }
-        return null;
-      }
-      
-    });
-  </script>
+    </script>
 
 </dom-module>

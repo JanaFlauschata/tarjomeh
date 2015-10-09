@@ -1,0 +1,55 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-contact-menu">
+
+    <template>
+
+        <style>
+            paper-icon-button {
+                padding: 0px 0px 0px 0px;
+            }
+        </style>
+
+        <paper-menu-button id="menuButtonNativeLanguages" on-tap="_stopPropagation">
+            <paper-icon-button icon="{{icon}}" class="dropdown-trigger"></paper-icon-button>
+            <paper-menu class="dropdown-content" attr-for-selected="id" selected="{{selected}}">
+                <paper-item id="start" hidden="{{translationStarted}}">Start translation</paper-item>
+                <paper-item id="remove">Remove contact</paper-item>
+            </paper-menu>
+        </paper-menu-button>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: "tarjomeh-contact-menu",
+            properties: {
+                icon: {
+                    type: String,
+                    value: 'more-vert'
+                },
+                translationStarted: {
+                    type: Boolean,
+                    value: false
+                },
+                selected: {
+                    type: String
+                }
+            },
+
+            _stopPropagation: function (event) {
+//                event.stopPropagation();
+            }
+
+        });
+    </script>
+
+</dom-module>

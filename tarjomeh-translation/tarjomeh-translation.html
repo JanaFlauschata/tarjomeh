@@ -1,0 +1,61 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../tarjomeh-collapse/tarjomeh-collapse.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-translation">
+
+    <template>
+
+        <style>
+
+        </style>
+
+            <tarjomeh-collapse>
+                <div class="title">Translation sentence</div>
+                <div class="content">Bla blupp lalala bluppiti...</div>
+            </tarjomeh-collapse>
+
+            <tarjomeh-collapse>
+                <div class="title">Translated by <span>[[contactProfile.name]]</span></div>
+                <div class="content">Bla blupp lalala bluppiti...</div>
+            </tarjomeh-collapse>
+
+            <tarjomeh-collapse>
+                <div class="title">Translated by me</div>
+                <div class="content">Bla blupp lalala bluppiti...</div>
+            </tarjomeh-collapse>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: "tarjomeh-translation",
+            properties: {
+                friend: {
+                    type: Object,
+                    value: function() {
+                        return {}
+                    }
+                },
+                myProfile: {
+                    type: Object,
+                    value: function() {
+                        return {};
+                    },
+                    notify: true
+                },
+                contactProfile: {
+                    type: Object,
+                    notify: true
+                }
+            }
+
+        });
+    </script>
+
+</dom-module>

@@ -80,8 +80,8 @@
       },
       
       getByKey: function(key) {
+        //this._saveTimestamp(); //TODO
         return this.$.fbCollection.getByKey(key);
-        this._saveTimestamp();
       },
       
       addToChild: function(child, entry) {

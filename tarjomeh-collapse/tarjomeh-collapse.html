@@ -23,7 +23,7 @@
       }
       
       .content {
-        padding: 15px;
+        /*padding: 15px;*/
         border: 1px solid #e0e0e0;
         border-top: none;
         border-bottom-left-radius: 5px;
@@ -41,7 +41,7 @@
         <div class="flex"></div>
         <div><iron-icon icon="hardware:keyboard-arrow-down"></iron-icon></div>
       </div>
-      <iron-collapse id="collapse">
+      <iron-collapse id="collapse" opened="{{opened}}">
         <div class="content"><content select=".content"></content></div>
       </iron-collapse>
       
@@ -52,6 +52,14 @@
   <script>
     Polymer({
       is: "tarjomeh-collapse",
+
+      properties: {
+        opened: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
+      },
 
       _toggle: function() {
         this.$.collapse.toggle();

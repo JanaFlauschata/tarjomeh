@@ -3,6 +3,9 @@
 <link rel="import" href="../tarjomeh-userlist-entry/tarjomeh-userlist-entry.html">
 <link rel="import" href="../tarjomeh-collapse/tarjomeh-collapse.html">
 <link rel="import" href="../tarjomeh-chat/tarjomeh-chat.html">
+<link rel="import" href="../tarjomeh-translation/tarjomeh-translation.html">
+<link rel="import" href="../tarjomeh-contact-menu/tarjomeh-contact-menu.html">
+
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -13,104 +16,130 @@
 
 <dom-module id="tarjomeh-contact">
 
-  <template>
+    <template>
 
-    <style>
-      .dialog-large {
-        position: fixed;
-        width: 100%;
-        padding: 0;
-        margin: 10px;
-        box-shadow: none;
-        overflow: visible;
-      }
-      
-      .dialog-small {
-        position: fixed;
-        width: 100%;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 0;
-        margin: 0;   
-        box-shadow: none;
-      }
-    </style>
+        <style>
+            .dialog-large {
+                position: fixed;
+                width: 100%;
+                padding: 0;
+                margin: 10px;
+                box-shadow: none;
+                overflow: visible;
+            }
 
-    <tarjomeh-userlist-entry uid="[[friend.__firebaseKey__]]" profile="{{contactProfile}}" on-tap="_showDialog"></tarjomeh-userlist-entry>
-    <paper-dialog id="dialog" fit-into=[[fitInto]]>
-    
-      <paper-toolbar hidden="{{!_isDialogFullscreen(fitInto)}}">
-        <div class="layout horizontal"><paper-icon-button icon="arrow-back" dialog-confirm></paper-icon-button></div>
-        <div class="title flex">Game</div>
-      </paper-toolbar>  
-      
-      <tarjomeh-collapse>
-        <div class="title">Translation sentence</div>
-        <div class="content">Bla blupp lalala bluppiti...</div>
-      </tarjomeh-collapse>
-      
-      <tarjomeh-collapse>
-        <div class="title">Translated by <span>[[contactProfile.name]]</span></div>
-        <div class="content">Bla blupp lalala bluppiti...</div>
-      </tarjomeh-collapse>
-      
-      <tarjomeh-collapse>
-        <div class="title">Translated by me</div>
-        <div class="content">Bla blupp lalala bluppiti...</div>
-      </tarjomeh-collapse>
-      
-      <tarjomeh-chat id="chat" friend="{{friend}}" contact-profile="{{contactProfile}}" my-profile="{{myProfile}}"></tarjomeh-chat>
-      
-    </paper-dialog>
-    
-  </template>
+            .dialog-small {
+                position: fixed;
+                width: 100%;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                padding: 0;
+                margin: 0;
+                box-shadow: none;
+            }
+        </style>
 
-  <script>
-    Polymer({
-      is: "tarjomeh-contact",
-      properties: {
-        friend: {
-          type: Object,
-          value: function() {
-            return {}
-          }
-        },
-        myProfile: {
-          type: Object,
-          value: function() {
-            return {};
-          },
-          notify: true
-        },
-        fitInto: {
-          type: Object,
-          value: window,
-          observer: 'fitIntoChanged'
-        }
-      },
-      
-      fitIntoChanged: function() {
-        if (this.fitInto === window) { //TOOD function call
-          this.toggleClass('dialog-large', false, this.$.dialog);
-          this.toggleClass('dialog-small', true, this.$.dialog);
-        }
-        else {
-          this.toggleClass('dialog-large', true, this.$.dialog);
-          this.toggleClass('dialog-small', false, this.$.dialog);
-        }
-      },
-      
-      _isDialogFullscreen: function(fitInto) {
-        return fitInto === window;
-      },
-      
-      _showDialog: function() {
-        this.$.dialog.open();
-      }
-      
-    });
-  </script>
+        <tarjomeh-userlist-entry id="entry" friend="[[friend]]" profile="{{contactProfile}}" on-tap="_showDialog"
+                                 highlighted="{{dialogOpened}}" selected="{{_selected}}"></tarjomeh-userlist-entry>
+
+        <paper-dialog id="dialog" fit-into=[[fitInto]] opened="{{dialogOpened}}">
+
+            <paper-toolbar hidden="{{!_isDialogFullscreen(fitInto)}}">
+                <div class="layout horizontal">
+                    <paper-icon-button icon="arrow-back" dialog-confirm></paper-icon-button>
+                </div>
+                <div class="title flex">Game</div>
+                <div>
+                    <tarjomeh-contact-menu translation-started="{{friend.translation}}"
+                                           selected="{{_selected}}"></tarjomeh-contact-menu>
+                </div>
+            </paper-toolbar>
+
+            <tarjomeh-translation hidden="{{!friend.translation}}"></tarjomeh-translation>
+
+            <tarjomeh-chat id="chat" friend="{{friend}}" contact-profile="{{contactProfile}}"
+                           my-profile="{{myProfile}}"></tarjomeh-chat>
+
+        </paper-dialog>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: "tarjomeh-contact",
+            properties: {
+                friend: {
+                    type: Object,
+                    value: function () {
+                        return {}
+                    }
+                },
+                myProfile: {
+                    type: Object,
+                    value: function () {
+                        return {};
+                    },
+                    notify: true
+                },
+                fitInto: {
+                    type: Object,
+                    value: window,
+                    observer: 'fitIntoChanged'
+                },
+                _selected: {
+                    type: String,
+                    observer: '_selectedChanged'
+                }
+            },
+
+            listeners: {
+                'friend-updated': '_friendUpdated'
+            },
+
+            _friendUpdated: function () {
+                if (!this.$.dialog.opened) {
+                    this.$.entry.showBadge(true);
+                }
+            },
+
+            fitIntoChanged: function () {
+                if (this.fitInto === window) { //TODO function call
+                    this.toggleClass('dialog-large', false, this.$.dialog);
+                    this.toggleClass('dialog-small', true, this.$.dialog);
+                }
+                else {
+                    this.toggleClass('dialog-large', true, this.$.dialog);
+                    this.toggleClass('dialog-small', false, this.$.dialog);
+                }
+            },
+
+            _selectedChanged: function() {
+                switch(expression) {
+                    case 'start':
+                        //TODO create translation in db and add entry to friend objects
+                        break;
+                    case 'remove':
+                        break;
+                    default:
+                }
+            },
+
+            _isDialogFullscreen: function (fitInto) {
+                return fitInto === window;
+            },
+
+            _hasTranslation: function (friend) {
+                return friend.translation;
+            },
+
+            _showDialog: function () {
+                this.$.entry.showBadge(false);
+                this.$.dialog.open();
+            }
+
+        });
+    </script>
 
 </dom-module>
