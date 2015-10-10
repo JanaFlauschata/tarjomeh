@@ -5,6 +5,7 @@
 <link rel="import" href="../tarjomeh-chat/tarjomeh-chat.html">
 <link rel="import" href="../tarjomeh-translation/tarjomeh-translation.html">
 <link rel="import" href="../tarjomeh-contact-menu/tarjomeh-contact-menu.html">
+<link rel="import" href="../tarjomeh-dialogs/tarjomeh-start-translation-dialog.html">
 
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
@@ -42,7 +43,7 @@
         </style>
 
         <tarjomeh-userlist-entry id="entry" friend="[[friend]]" profile="{{contactProfile}}" on-tap="_showDialog"
-                                 highlighted="{{dialogOpened}}" selected="{{_selected}}"></tarjomeh-userlist-entry>
+                                 highlighted="{{dialogOpened}}" on-iron-select="_selectedChanged"></tarjomeh-userlist-entry>
 
         <paper-dialog id="dialog" fit-into=[[fitInto]] opened="{{dialogOpened}}">
 
@@ -53,7 +54,7 @@
                 <div class="title flex">Game</div>
                 <div>
                     <tarjomeh-contact-menu translation-started="{{friend.translation}}"
-                                           selected="{{_selected}}"></tarjomeh-contact-menu>
+                                           on-iron-select="_selectedChanged"></tarjomeh-contact-menu>
                 </div>
             </paper-toolbar>
 
@@ -63,6 +64,8 @@
                            my-profile="{{myProfile}}"></tarjomeh-chat>
 
         </paper-dialog>
+
+        <tarjomeh-start-translation-dialog id="startTranslationDialog" my-profile="{{myProfile}}" contact-profile="{{contactProfile}}" friend="{{friend}}"></tarjomeh-start-translation-dialog>
 
     </template>
 
@@ -115,11 +118,11 @@
                 }
             },
 
-            _selectedChanged: function() {
-                switch(expression) {
+            _selectedChanged: function (event) {
+                if (!event.detail) return;
+                switch (event.detail.item.id) {
                     case 'start':
-                        //TODO create translation in db and add entry to friend objects
-                        break;
+                        this.$.startTranslationDialog.open();
                     case 'remove':
                         break;
                     default:

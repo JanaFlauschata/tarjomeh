@@ -1,0 +1,73 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-start-translation-dialog">
+
+<template>
+
+    <style>
+
+    </style>
+
+    <tarjomeh-collection id="translationCollection"
+                         path="translations"
+                         user-uid="[[myProfile.uid]]"></tarjomeh-collection> <!-- TODO check whether only the right data is fetched when security is set up properly -->
+    <tarjomeh-collection id="myFriendsCollection" path="{{_computeFriendsPath(myProfile.uid)}}"
+                         user-uid="[[myProfile.uid]]"></tarjomeh-collection>
+    <tarjomeh-collection id="contactFriendsCollection" path="{{_computeFriendsPath(contactProfile.uid)}}"
+                         user-uid="[[myProfile.uid]]"></tarjomeh-collection>
+
+    <paper-dialog id="dialog">
+asf
+    </paper-dialog>
+
+</template>
+
+<script>
+    Polymer({
+        is: "tarjomeh-start-translation-dialog",
+        properties: {
+            friend: {
+                type: Object,
+                notify: true
+            },
+            myProfile: {
+                type: Object
+            },
+            contactProfile: {
+                type: Object
+            }
+        },
+
+        open: function() {
+            this.$.dialog.open();
+        },
+
+        _saveTranslation: function () {
+            var key = this.$.translationCollection.add({
+                'id1': this.myProfile.uid,
+                'id2': this.contactProfile.uid
+            });
+            this.friend.translation = key;
+            this.friend.__firebaseKey__ = null; //TODO do in collection
+            this.$.myFriendsCollection.addToChild(this.contactProfile.uid, this.friend);
+            this.$.contactFriendsCollection.addToChild(this.myProfile.uid, this.friend);
+        },
+
+        _computeTranslationPath: function (myUid, contactUid) {
+            return 'translations/' + myUid + '/' + contactUid;
+        },
+
+        _computeFriendsPath: function (userUid) {
+            return 'friends/' + userUid;
+        }
+
+    });
+</script>
+
+</dom-module>

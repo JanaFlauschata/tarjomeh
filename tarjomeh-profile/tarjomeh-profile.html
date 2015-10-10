@@ -69,11 +69,12 @@
                                 throw 'Unknown provider: ' + this.fbUser.provider;
                         }
                     }
-                    //TODO rethink
-                    this.profile.last_logout = this.profile.last_active;
-                    this.profile.last_login = Firebase.ServerValue.TIMESTAMP;
-                    this.$.profileCollection.addToChild('profile', this.profile);
-
+                    if (this.uid == this.fbUser.uid) {
+                        //TODO rethink
+                        this.profile.last_logout = this.profile.last_active;
+                        this.profile.last_login = Firebase.ServerValue.TIMESTAMP;
+                        this.$.profileCollection.addToChild('profile', this.profile);
+                    }
 
                 }.bind(this), function (errorObject) {
                     throw 'Profile could not be read!';

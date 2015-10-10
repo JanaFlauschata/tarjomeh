@@ -10,7 +10,7 @@
     <style>
     </style>
     
-    <firebase-collection id="fbCollection" location="{{_computePath(path)}}" data="{{data}}" order-by-child="{{orderByChild}}" order-by-value="{{orderByValue}}"></firebase-collection>
+    <firebase-collection id="fbCollection" location="{{_computePath(path)}}" data="{{data}}" order-by-child="{{orderByChild}}" order-by-value="{{orderByValue}}" limit-to-last="{{limitToLast}}"></firebase-collection>
     <firebase-collection id="profileCollection" location="{{_computeProfilePath(userUid)}}"></firebase-collection>
     
   </template>
@@ -42,6 +42,11 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+        limitToLast: {
+          type: Number,
+          value: null,
+          reflectToAttribute: true
         }
       },
       
@@ -65,8 +70,9 @@
       },
       
       add: function(entry) {
-        this.$.fbCollection.add(entry);
+        var query = this.$.fbCollection.add(entry)
         this._saveTimestamp();
+        return query.key();
       },
       
       remove: function(entry) {
