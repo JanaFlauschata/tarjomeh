@@ -126,17 +126,8 @@
           value: function(){
             return [];
           },
-          notify: true,
+          notify: true
         }
-        /*,
-        languages: { //TODO private
-          type: Array,
-          value: function(){
-            return [];
-          },
-          notify: true,
-          observer: '_initialize'
-        }*/
       },
       
       ready: function() {
@@ -159,7 +150,7 @@
       },
       
       _initialize: function() {
-        if (this.languages && this.languages.length > 0 &&  this.user && Object.keys(this.user).length > 0 && this._chooseableLanguages.length === 0) { //RODO besser machen
+        if (this.languages && this.languages.length > 0 &&  this.user && Object.keys(this.user).length > 0 && this._chooseableLanguages.length === 0) { //TODO besser machen
           this.languages.forEach(function(language) {
             if (!this._contains(this.user.native_languages, language.value) && !this._contains(this.user.learning_languages, language.value)) {
               this.push('_chooseableLanguages', language.value);

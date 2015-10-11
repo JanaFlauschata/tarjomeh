@@ -18,130 +18,150 @@
 
 <dom-module id="tarjomeh-sidebar">
 
-  <template>
+    <template>
 
-    <style>
-     
-      .paper-header {
-        /*height: 200px;*/
-        background-color: #757575;
-        /*color: var(--disabled-text-color);*/
+        <style>
 
-      }
-      
-      paper-header-panel {
-        background-color: var(--disabled-text-color);
-      }
-      
-      .avatar {
-		    border-radius: 50%;
-		    width: 80px;
-		    height: 80px;
-  	        margin: 20px 10px 10px 20px;
-		    background: #9e9e9e center center no-repeat;
-		    background-size: contain;
-		    position: relative;
-            border: 4px solid var(--accent-color);
-      }
-	    
-	    .username {
-	      font-size: 20px;
-	      margin: 20px 20px 10px 10px;
-	    }
-      
-      iron-icon {
-        margin-right: 5px;
-      }
-      
-      paper-item {
-      --paper-item: {
-        cursor: pointer;
-      };
-    }
-      
-    </style>
-    
-    <paper-header-panel mode="waterfall-tall">
-      <div class="paper-header">
-        <div class="layout horizontal center justified">
-          <div class="avatar" style$="[[_computeImgStyle(user.imageurl)]]"></div>
-          <div class="username flex">{{user.name}}</div>
-        </div>
-        
-        <div class="layout horizontal around-justified" style="margin: 10px 20px 20px 20px;">
-          <div class="layout horizontal flex center">
-            <iron-icon icon="social:people"></iron-icon> <span>2</span>
-          </div>
-          <div class="layout horizontal flex center">
-            <iron-icon icon="thumb-up"></iron-icon> <span>5</span>
-          </div>
-        </div>
-        
-      </div>
-        <div class="content">
-      
-         <paper-menu id="menu" on-iron-select="_select">
-          <paper-item id="profile"><iron-icon icon="face"></iron-icon> Edit your Profile</paper-item>
-          <paper-item id="settings"><iron-icon icon="settings"></iron-icon> Change your settings</paper-item>
-          <hr>
-          <paper-item id="logout"><iron-icon icon="exit-to-app"></iron-icon>Logout</paper-item>
-        </paper-menu>
-         
-      <div>
-    </paper-header-panel>
- 
+            .paper-header {
+                /*height: 200px;*/
+                background-color: #757575;
+                /*color: var(--disabled-text-color);*/
 
-       <tarjomeh-profile-dialog id="dialogProfile" user="{{user}}"></tarjomeh-profile-dialog>
-   
+            }
+
+            paper-header-panel {
+                background-color: var(--disabled-text-color);
+            }
+
+            .avatar {
+                border-radius: 50%;
+                width: 80px;
+                height: 80px;
+                margin: 20px 10px 10px 20px;
+                background: #9e9e9e center center no-repeat;
+                background-size: contain;
+                position: relative;
+                border: 4px solid var(--accent-color);
+            }
+
+            paper-menu {
+                background-color: #BDBDBD;
+            }
+
+            .username {
+                font-size: 20px;
+                margin: 20px 20px 10px 10px;
+            }
+
+            iron-icon {
+                margin-right: 5px;
+            }
+
+            paper-item {
+
+            -
+            -paper-item: {
+                cursor: pointer;
+            }
+
+            ;
+            }
+
+        </style>
+
+        <paper-header-panel mode="waterfall-tall">
+            <div class="paper-header">
+                <div class="layout horizontal center justified">
+                    <div class="avatar" style$="[[_computeImgStyle(user.imageurl)]]"></div>
+                    <div class="username flex">{{user.name}}</div>
+                </div>
+
+                <div class="layout horizontal around-justified" style="margin: 10px 20px 20px 20px;">
+                    <div class="layout horizontal flex center">
+                        <iron-icon icon="social:people"></iron-icon>
+                        <span>2</span>
+                    </div>
+                    <div class="layout horizontal flex center">
+                        <iron-icon icon="thumb-up"></iron-icon>
+                        <span>5</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="content">
+
+                <paper-menu id="menu" on-iron-select="_select">
+                    <paper-item id="profile">
+                        <iron-icon icon="face"></iron-icon>
+                        Edit your Profile
+                    </paper-item>
+                    <paper-item id="settings">
+                        <iron-icon icon="settings"></iron-icon>
+                        Change your settings
+                    </paper-item>
+                    <hr>
+                    <paper-item id="logout">
+                        <iron-icon icon="exit-to-app"></iron-icon>
+                        Logout
+                    </paper-item>
+                </paper-menu>
+
+                <div>
+        </paper-header-panel>
+
+
+        <tarjomeh-profile-dialog id="dialogProfile" user="{{user}}"></tarjomeh-profile-dialog>
+
         <paper-dialog id="dialogSettings" entry-animation="scale-up-animation"
-              exit-animation="fade-out-animation">
+                      exit-animation="fade-out-animation">
             <h2>Settings</h2>
+
             <div>Dialog body</div>
         </paper-dialog>
-    
-  </template>
-  <script>
-    Polymer({
-      is: "tarjomeh-sidebar",
-      properties: {
-        user: {
-          type: Object,
-          value: function(){
-            return {};
-          },
-          notify: true
-        }
-      },
-      
-      _select: function(event) {
-        switch(event.detail.item.id) {
-          case 'profile':
-            this.$.dialogProfile.open();
-            break;
-          case 'settings':
-            this.$.dialogSettings.open();
-            break;
-          case 'logout':
-            this._logout();
-            break;
-          default:
-        }
-          this.$.menu.selected = -1;
-      },
-      
-      _logout: function() {
-        this.fire('logout-requested', {});
-      },
-      
-      //TODO redundant
-      _computeImgStyle : function(imageurl) {
-        if (imageurl) {
-          return 'background-image: url(' + imageurl + ')';
-        }
-        return null;
-      }
-    
-    });
-  </script>
+
+    </template>
+    <script>
+        Polymer({
+            is: "tarjomeh-sidebar",
+            properties: {
+                user: {
+                    type: Object,
+                    value: function () {
+                        return {};
+                    },
+                    notify: true
+                }
+            },
+
+            _select: function (event) {
+                switch (event.detail.item.id) {
+                    case 'profile':
+                        this.$.dialogProfile.open();
+                        break;
+                    case 'settings':
+                        this.$.dialogSettings.open();
+                        break;
+                    case 'logout':
+                        this._logout();
+                        break;
+                    default:
+                }
+                this.$.menu.selected = -1;
+            },
+
+            _logout: function () {
+                this.fire('logout-requested', {});
+            },
+
+            //TODO redundant
+            _computeImgStyle: function (imageurl) {
+                if (imageurl) {
+                    return 'background-image: url(' + imageurl + ')';
+                }
+                return null;
+            }
+
+        });
+    </script>
 
 </dom-module>
