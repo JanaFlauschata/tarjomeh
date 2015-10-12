@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../tarjomeh-collapse/tarjomeh-collapse.html">
+<link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
@@ -15,9 +16,15 @@
 
         </style>
 
+            <tarjomeh-collection id="translationCollection"
+                             path="{{_computePath(friend.translation)}}"
+                             user-uid="[[myProfile.uid]]"></tarjomeh-collection>
+
             <tarjomeh-collapse>
                 <div class="title">Translation sentence</div>
-                <div class="content">Bla blupp lalala bluppiti...</div>
+                <div class="content">
+                    <div>[[_translation.sentence]]</div>
+                </div>
             </tarjomeh-collapse>
 
             <tarjomeh-collapse>
@@ -51,8 +58,34 @@
                 },
                 contactProfile: {
                     type: Object,
-                    notify: true
+                    notify: true,
+                    value: function() {
+                        return {};
+                    }
+                },
+                _translation: {
+                    type: Object,
+                    value: function() {
+                        return {}
+                    }
                 }
+            },
+
+            ready: function() {
+                this.$.translationCollection.$.fbCollection.query.once("value", function (snapshot) {
+                    this._translation = this.$.translationCollection.getByKey('translation');
+                }.bind(this));
+
+                this.$.translationCollection.$.fbCollection.query.on("value", function (snapshot) { //TODO refactor!!!
+                    this._translation = this.$.translationCollection.getByKey('translation');
+                }.bind(this));
+            },
+
+            _computePath: function(uid) {
+                if (uid) {
+                    return 'translations/' + uid;
+                }
+                return null;
             }
 
         });

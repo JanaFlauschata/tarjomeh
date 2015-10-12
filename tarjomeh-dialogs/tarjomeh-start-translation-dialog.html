@@ -29,27 +29,27 @@
 
     <paper-dialog id="dialog">
         <h2>Start a translation</h2>
-        <paper-dropdown-menu label="My learning language" always-float-label>
+        <paper-dropdown-menu label="My learning language" selected-item="{{myLanguage}}" always-float-label>
             <paper-menu class="dropdown-content" selected="0">
                 <template is="dom-repeat" items="{{_myLanguages}}" sort="_sort" as="language">
-                    <paper-item language="[[language]]">[[language]]</paper-item>
+                    <paper-item id="[[language]]">[[language]]</paper-item>
                 </template>
             </paper-menu>
         </paper-dropdown-menu>
 
-        <paper-dropdown-menu label="{{_computeLabel(contactProfile)}}" always-float-label>
+        <paper-dropdown-menu label="{{_computeLabel(contactProfile)}}" selected-item="{{contactLanguage}}" always-float-label>
             <paper-menu class="dropdown-content" selected="0">
                 <template is="dom-repeat" items="{{_contactLanguages}}" sort="_sort" as="language">
-                    <paper-item language="[[language]]">[[language]]</paper-item>
+                    <paper-item id="[[language]]">[[language]]</paper-item>
                 </template>
             </paper-menu>
         </paper-dropdown-menu>
 
-        <paper-textarea label="Type your translation sentence" always-float-label></paper-textarea>
+        <paper-textarea label="Type your translation sentence" value="{{sentence}}" always-float-label></paper-textarea>
 
         <div class="buttons">
             <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button dialog-confirm autofocus>Start</paper-button>
+            <paper-button on-tap="_saveTranslation" dialog-confirm autofocus>Start</paper-button>
         </div>
     </paper-dialog>
 
@@ -127,8 +127,17 @@
 
         _saveTranslation: function () {
             var key = this.$.translationCollection.add({
-                'id1': this.myProfile.uid,
-                'id2': this.contactProfile.uid
+                'translation': {
+                    'user1': {
+                        'uid': this.myProfile.uid,
+                        'language': this.myLanguage.id
+                    },
+                    'user2': {
+                        'uid': this.contactProfile.uid,
+                        'language': this.contactLanguage.id
+                    },
+                    'sentence': this.sentence
+                }
             });
             this.friend.translation = key;
             this.friend.__firebaseKey__ = null; //TODO do in collection
