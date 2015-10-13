@@ -95,10 +95,6 @@
                     type: Object,
                     value: window,
                     observer: 'fitIntoChanged'
-                },
-                _selected: {
-                    type: String,
-                    observer: '_selectedChanged'
                 }
             },
 
@@ -128,6 +124,7 @@
                 switch (event.detail.item.id) {
                     case 'start':
                         this.$.startTranslationDialog.open();
+                        break;
                     case 'remove':
                         break;
                     default:

@@ -16,11 +16,15 @@
             paper-icon-button {
                 padding: 0px 0px 0px 0px;
             }
+
+            paper-item {
+                cursor: pointer;
+            }
         </style>
 
-        <paper-menu-button id="menuButtonNativeLanguages" on-tap="_stopPropagation">
+        <paper-menu-button id="menuButtonContact" on-tap="_stopPropagation">
             <paper-icon-button icon="{{icon}}" class="dropdown-trigger"></paper-icon-button>
-            <paper-menu class="dropdown-content" attr-for-selected="id" selected="{{selected}}">
+            <paper-menu class="dropdown-content" attr-for-selected="id" selected="{{selected}}" on-iron-select="_reset">
                 <paper-item id="start" hidden="{{translationStarted}}">Start translation</paper-item>
                 <paper-item id="remove">Remove contact</paper-item>
             </paper-menu>
@@ -47,7 +51,11 @@
             },
 
             _stopPropagation: function (event) {
-//                event.stopPropagation();
+                event.stopPropagation();
+            },
+
+            _reset: function() {
+                this.selected = '';
             }
 
         });
