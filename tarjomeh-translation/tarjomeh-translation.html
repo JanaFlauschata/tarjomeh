@@ -2,7 +2,9 @@
 
 <link rel="import" href="../tarjomeh-collapse/tarjomeh-collapse.html">
 <link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
+<link rel="import" href="tarjomeh-mytranslation.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 
@@ -29,13 +31,10 @@
 
             <tarjomeh-collapse>
                 <div class="title">Translated by <span>[[contactProfile.name]]</span></div>
-                <div class="content">Bla blupp lalala bluppiti...</div>
+                <div class="content">[[_getContactTranslation(_translation)]]</div>
             </tarjomeh-collapse>
 
-            <tarjomeh-collapse>
-                <div class="title">Translated by me</div>
-                <div class="content">Bla blupp lalala bluppiti...</div>
-            </tarjomeh-collapse>
+            <tarjomeh-mytranslation translation="{{_translation}}" my-profile="{{myProfile}}"></tarjomeh-mytranslation>
 
     </template>
 
@@ -71,14 +70,26 @@
                 }
             },
 
-            ready: function() {
-                this.$.translationCollection.$.fbCollection.query.once("value", function (snapshot) {
-                    this._translation = this.$.translationCollection.getByKey('translation');
-                }.bind(this));
+            observers: [
+                '_translationChanged(_translation.*)'
+            ],
 
-                this.$.translationCollection.$.fbCollection.query.on("value", function (snapshot) { //TODO refactor!!!
+            ready: function() {
+                this.$.translationCollection.$.fbCollection.query.on("value", function (snapshot) { //TODO refactor!!! only change relevant part by snapshot
                     this._translation = this.$.translationCollection.getByKey('translation');
                 }.bind(this));
+            },
+
+            _translationChanged: function(newValue) {
+                  if (newValue.path !== '_translation') {
+                    this.$.translationCollection.addToChild(newValue.path.replace('_',''), newValue.value);
+               }
+            },
+
+            _getContactTranslation: function(translation) {
+                if (translation && translation.user1 && translation.user2) {
+                    return translation.user1.uid === this.contactProfile.uid ? translation.user1.sentence : translation.user2.sentence;
+                }
             },
 
             _computePath: function(uid) {

@@ -13,151 +13,165 @@
 
 <dom-module id="tarjomeh-start-translation-dialog">
 
-<template>
+    <template>
 
-    <style>
+        <style>
 
-    </style>
+        </style>
 
-    <tarjomeh-collection id="translationCollection"
-                         path="translations"
-                         user-uid="[[myProfile.uid]]"></tarjomeh-collection> <!-- TODO check whether only the right data is fetched when security is set up properly -->
-    <tarjomeh-collection id="myFriendsCollection" path="{{_computeFriendsPath(myProfile.uid)}}"
-                         user-uid="[[myProfile.uid]]"></tarjomeh-collection>
-    <tarjomeh-collection id="contactFriendsCollection" path="{{_computeFriendsPath(contactProfile.uid)}}"
-                         user-uid="[[myProfile.uid]]"></tarjomeh-collection>
+        <tarjomeh-collection id="translationCollection"
+                             path="translations"
+                             user-uid="[[myProfile.uid]]"></tarjomeh-collection>
+        <!-- TODO check whether only the right data is fetched when security is set up properly -->
+        <tarjomeh-collection id="myFriendsCollection" path="{{_computeFriendsPath(myProfile.uid)}}"
+                             user-uid="[[myProfile.uid]]"></tarjomeh-collection>
+        <tarjomeh-collection id="contactFriendsCollection" path="{{_computeFriendsPath(contactProfile.uid)}}"
+                             user-uid="[[myProfile.uid]]"></tarjomeh-collection>
 
-    <paper-dialog id="dialog">
-        <h2>Start a translation</h2>
-        <paper-dropdown-menu label="My learning language" selected-item="{{myLanguage}}" always-float-label>
-            <paper-menu class="dropdown-content" selected="0">
-                <template is="dom-repeat" items="{{_myLanguages}}" sort="_sort" as="language">
-                    <paper-item id="[[language]]">[[language]]</paper-item>
-                </template>
-            </paper-menu>
-        </paper-dropdown-menu>
+        <paper-dialog id="dialog">
+            <h2>Start a translation</h2>
 
-        <paper-dropdown-menu label="{{_computeLabel(contactProfile)}}" selected-item="{{contactLanguage}}" always-float-label>
-            <paper-menu class="dropdown-content" selected="0">
-                <template is="dom-repeat" items="{{_contactLanguages}}" sort="_sort" as="language">
-                    <paper-item id="[[language]]">[[language]]</paper-item>
-                </template>
-            </paper-menu>
-        </paper-dropdown-menu>
+            <!--<div hidden$="[[!_empty(_contactLanguages,_myLanguages)]]">
+                Sorry! <span>[[contactProfile.name]]</span>'s learning languages don't match your native language.
+            </div>
 
-        <paper-textarea label="Type your translation sentence" value="{{sentence}}" always-float-label></paper-textarea>
+            <div hidden$="[[_empty(_contactLanguages,_myLanguages)]]">-->
+            <div>
+                <paper-dropdown-menu label="My learning language" selected-item="{{myLanguage}}" always-float-label>
+                    <paper-menu class="dropdown-content" selected="0">
+                        <template is="dom-repeat" items="{{_myLanguages}}" sort="_sort" as="language">
+                            <paper-item id="[[language]]">[[language]]</paper-item>
+                        </template>
+                    </paper-menu>
+                </paper-dropdown-menu>
 
-        <div class="buttons">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button on-tap="_saveTranslation" dialog-confirm autofocus>Start</paper-button>
-        </div>
-    </paper-dialog>
+                <paper-dropdown-menu label="{{_computeLabel(contactProfile)}}" selected-item="{{contactLanguage}}"
+                                     always-float-label>
+                    <paper-menu class="dropdown-content" selected="0">
+                        <template is="dom-repeat" items="{{_contactLanguages}}" sort="_sort" as="language">
+                            <paper-item id="[[language]]">[[language]]</paper-item>
+                        </template>
+                    </paper-menu>
+                </paper-dropdown-menu>
 
-</template>
+                <paper-textarea label="Type your translation sentence" value="{{sentence}}"
+                                always-float-label></paper-textarea>
+            </div>
 
-<script>
-    Polymer({
-        is: "tarjomeh-start-translation-dialog",
-        properties: {
-            friend: {
-                type: Object,
-                notify: true
-            },
-            myProfile: {
-                type: Object,
-                observer: '_updateLanguages'
-            },
-            contactProfile: {
-                type: Object,
-                observer: '_updateLanguages'
-            },
-            _myLanguages: {
-                type: Array,
-                value: function(){
-                    return [];
-                }
-            },
-            _contactLanguages: {
-                type: Array,
-                value: function(){
-                    return [];
-                }
-            }
-        },
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <!--<div hidden={{_empty(_myLanguages,_contactLanguages)}}>-->
+                    <paper-button on-tap="_saveTranslation" dialog-confirm autofocus>Start</paper-button>
+                <!--</div>-->
+            </div>
 
-        observers: [
-            '_updateLanguages(myProfile.native_languages)',
-            '_updateLanguages(myProfile.learning_languages)',
-            '_updateLanguages(contactProfile.native_languages)',
-            '_updateLanguages(contactProfile.learning_languages)'
-        ],
+        </paper-dialog>
 
-        open: function() {
-            this.$.dialog.open();
-        },
+    </template>
 
-        _updateLanguages: function() {
-            if (this.myProfile && Object.keys(this.myProfile).length > 0 && this.contactProfile && Object.keys(this.contactProfile).length > 0) {
-                this.set('_myLanguages', []);
-                this.set('_contactLanguages', []);
-                this.myProfile.native_languages.forEach(function(language) {
-                    if (this._contains(this.contactProfile.learning_languages, language)) {
-                        this.push('_myLanguages', language);
+    <script>
+        Polymer({
+            is: "tarjomeh-start-translation-dialog",
+            properties: {
+                friend: {
+                    type: Object,
+                    notify: true
+                },
+                myProfile: {
+                    type: Object,
+                    observer: '_updateLanguages'
+                },
+                contactProfile: {
+                    type: Object,
+                    observer: '_updateLanguages'
+                },
+                _myLanguages: {
+                    type: Array,
+                    value: function () {
+                        return [];
                     }
-                }.bind(this));
-                this.myProfile.learning_languages.forEach(function(language) {
-                    if (this._contains(this.contactProfile.native_languages, language)) {
-                        this.push('_contactLanguages', language);
+                },
+                _contactLanguages: {
+                    type: Array,
+                    value: function () {
+                        return [];
                     }
-                }.bind(this));
-            }
-        },
-
-        //TODO use some library
-        _sort: function(languageA, languageB) {
-            return languageA < languageB ? -1 : 1;
-        },
-
-        _contains: function(array, language) {
-            if (array) {
-                return array.indexOf(language) > -1;
-            }
-            return false;
-        },
-
-        _saveTranslation: function () {
-            var key = this.$.translationCollection.add({
-                'translation': {
-                    'user1': {
-                        'uid': this.myProfile.uid,
-                        'language': this.myLanguage.id
-                    },
-                    'user2': {
-                        'uid': this.contactProfile.uid,
-                        'language': this.contactLanguage.id
-                    },
-                    'sentence': this.sentence
                 }
-            });
-            this.friend.translation = key;
-            this.friend.__firebaseKey__ = null; //TODO do in collection
-            this.$.myFriendsCollection.addToChild(this.contactProfile.uid, this.friend);
-            this.$.contactFriendsCollection.addToChild(this.myProfile.uid, this.friend);
-        },
+            },
 
-        _computeTranslationPath: function (myUid, contactUid) {
-            return 'translations/' + myUid + '/' + contactUid;
-        },
+            observers: [
+                '_updateLanguages(myProfile.native_languages)',
+                '_updateLanguages(myProfile.learning_languages)',
+                '_updateLanguages(contactProfile.native_languages)',
+                '_updateLanguages(contactProfile.learning_languages)'
+            ],
 
-        _computeFriendsPath: function (userUid) {
-            return 'friends/' + userUid;
-        },
+            open: function () {
+                this.$.dialog.open();
+            },
 
-        _computeLabel: function(profile) {
-            return profile.name + '\'s learning language';
-        }
+            _updateLanguages: function () {
+                if (this.myProfile && Object.keys(this.myProfile).length > 0 && this.contactProfile && Object.keys(this.contactProfile).length > 0) {
+                    this.set('_myLanguages', []);
+                    this.set('_contactLanguages', []);
+                    this.myProfile.native_languages.forEach(function (language) {
+                        if (this._contains(this.contactProfile.learning_languages, language)) {
+                            this.push('_myLanguages', language);
+                        }
+                    }.bind(this));
+                    this.myProfile.learning_languages.forEach(function (language) {
+                        if (this._contains(this.contactProfile.native_languages, language)) {
+                            this.push('_contactLanguages', language);
+                        }
+                    }.bind(this));
+                }
+            },
 
-    });
-</script>
+            //TODO use some library
+            _sort: function (languageA, languageB) {
+                return languageA < languageB ? -1 : 1;
+            },
+
+            _contains: function (array, language) {
+                if (array) {
+                    return array.indexOf(language) > -1;
+                }
+                return false;
+            },
+
+            //TODO does not work
+            _empty: function (array1, array2) {
+                return array1.length === 0 || array2.length === 0;
+            },
+
+            _saveTranslation: function () {
+                var key = this.$.translationCollection.add({
+                    'translation': {
+                        'user1': {
+                            'uid': this.myProfile.uid,
+                            'language': this.myLanguage.id
+                        },
+                        'user2': {
+                            'uid': this.contactProfile.uid,
+                            'language': this.contactLanguage.id
+                        },
+                        'sentence': this.sentence
+                    }
+                });
+                this.friend.translation = key;
+                this.$.myFriendsCollection.addToChild(this.contactProfile.uid, this.friend);
+                this.$.contactFriendsCollection.addToChild(this.myProfile.uid, this.friend);
+            },
+
+            _computeFriendsPath: function (userUid) {
+                return 'friends/' + userUid;
+            },
+
+            _computeLabel: function (profile) {
+                return profile.name + '\'s learning language';
+            }
+
+        });
+    </script>
 
 </dom-module>

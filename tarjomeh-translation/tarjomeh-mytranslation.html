@@ -1,0 +1,89 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../tarjomeh-collapse/tarjomeh-collapse.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-mytranslation">
+
+    <template>
+
+        <style>
+            .content {
+                padding: 10px;
+            }
+
+            paper-button {
+                color: var(--default-primary-color);
+            }
+        </style>
+
+            <tarjomeh-collapse>
+                <div class="title">Translated by me</div>
+                <div class="content">
+                    <paper-textarea id="textarea" label="Your translation" value="{{myTranslation}}" always-float-label></paper-textarea>
+                    <div class="layout horizontal">
+                        <div class="flex"></div>
+                        <paper-button id="button" on-tap="_send">Send</paper-button>
+                    </div>
+                </div>
+            </tarjomeh-collapse>
+    </template>
+
+    <script>
+        Polymer({
+            is: "tarjomeh-mytranslation",
+            properties: {
+                friend: {
+                    type: Object,
+                    value: function() {
+                        return {}
+                    }
+                },
+                myProfile: {
+                    type: Object,
+                    value: function() {
+                        return {};
+                    },
+                    notify: true
+                },
+                contactProfile: {
+                    type: Object,
+                    notify: true,
+                    value: function() {
+                        return {};
+                    }
+                },
+                translation: {
+                    type: Object,
+                    value: function() {
+                        return {}
+                    },
+                    notify: true
+                }
+            },
+
+            _send: function() {
+                this.$.textarea.disabled = true;
+                this.$.button.hidden = true;
+                //this._getMyObject().sentence = this.myTranslation;
+                //this.notifyPath('translation.' + this._getMyObjectName() + '.sentence', this._getMyObject().sentence);
+                this.set('translation.' + this._getMyObjectName() + '.sentence',  this.myTranslation); //notify true nicht für subproperties??
+                console.log('my sentence: ' + this._getMyObject().sentence);
+            },
+
+            _getMyObject: function() {
+                return this.translation.user1.uid === this.myProfile.uid? this.translation.user1 : this.translation.user2;
+            },
+
+            _getMyObjectName: function() {
+                return this.translation.user1.uid === this.myProfile.uid? 'user1' : 'user2';
+            }
+
+        });
+    </script>
+
+</dom-module>

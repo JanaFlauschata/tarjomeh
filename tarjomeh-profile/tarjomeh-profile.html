@@ -54,9 +54,6 @@
                         this.profile = this.$.profileCollection.getByKey('profile');
                     }
 
-                    //TODO refactor
-                    this.profile.__firebaseKey__ = null;
-
                     if (this.fbUser.uid) { //TODO refactor
                         switch (this.fbUser.provider) {
                             case 'password':
