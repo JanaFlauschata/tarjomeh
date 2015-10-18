@@ -1,0 +1,82 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../tarjomeh-collapse/tarjomeh-collapse.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../app-theme.html">
+
+<dom-module id="tarjomeh-contact-translation">
+
+    <template>
+
+        <style>
+            .content {
+                padding: 10px;
+            }
+
+            paper-button {
+                color: var(--default-primary-color);
+            }
+        </style>
+
+        <tarjomeh-collapse>
+            <div class="title">Translated by <span>[[contactProfile.name]]</span></div>
+            <div class="content">
+                <div>[[_getContactTranslation(translation)]]</div>
+                <div class="layout horizontal">
+                    <div class="flex"></div>
+                    <paper-button id="button" on-tap="_accept">Accept</paper-button>
+                </div>
+            </div>
+        </tarjomeh-collapse>
+    </template>
+
+    <script>
+        Polymer({
+            is: "tarjomeh-contact-translation",
+            properties: {
+                friend: {
+                    type: Object,
+                    value: function () {
+                        return {}
+                    }
+                },
+                myProfile: {
+                    type: Object,
+                    value: function () {
+                        return {};
+                    },
+                    notify: true
+                },
+                contactProfile: {
+                    type: Object,
+                    notify: true,
+                    value: function () {
+                        return {};
+                    }
+                },
+                translation: {
+                    type: Object,
+                    value: function () {
+                        return {}
+                    },
+                    notify: true
+                }
+            },
+
+            _getContactTranslation: function (translation) {
+                if (translation && translation.user1 && translation.user2) {
+                    return translation.user1.uid === this.contactProfile.uid? translation.user1.sentence : translation.user2.sentence;
+                }
+            },
+
+            _accept: function() {
+
+            }
+
+        });
+    </script>
+
+</dom-module>

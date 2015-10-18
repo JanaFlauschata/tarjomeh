@@ -7,7 +7,7 @@
 
 <link rel="import" href="../app-theme.html">
 
-<dom-module id="tarjomeh-mytranslation">
+<dom-module id="tarjomeh-my-translation">
 
     <template>
 
@@ -21,31 +21,40 @@
             }
         </style>
 
-            <tarjomeh-collapse>
-                <div class="title">Translated by me</div>
-                <div class="content">
-                    <paper-textarea id="textarea" label="Your translation" value="{{myTranslation}}" always-float-label></paper-textarea>
+        <tarjomeh-collapse>
+            <div class="title">Translated by me</div>
+            <div class="content">
+
+                <div hidden$="[[_isAlreadyTranslated(translation)]]">
+                    <paper-textarea id="textarea" label="Your translation" value="{{myTranslation}}"
+                                    always-float-label></paper-textarea>
                     <div class="layout horizontal">
                         <div class="flex"></div>
                         <paper-button id="button" on-tap="_send">Send</paper-button>
                     </div>
                 </div>
-            </tarjomeh-collapse>
+
+                <div hidden$="[[!_isAlreadyTranslated(translation)]]">
+                    <span>[[_getMyTranslation(translation)]]</span>
+                </div>
+
+            </div>
+        </tarjomeh-collapse>
     </template>
 
     <script>
         Polymer({
-            is: "tarjomeh-mytranslation",
+            is: "tarjomeh-my-translation",
             properties: {
                 friend: {
                     type: Object,
-                    value: function() {
+                    value: function () {
                         return {}
                     }
                 },
                 myProfile: {
                     type: Object,
-                    value: function() {
+                    value: function () {
                         return {};
                     },
                     notify: true
@@ -53,34 +62,42 @@
                 contactProfile: {
                     type: Object,
                     notify: true,
-                    value: function() {
+                    value: function () {
                         return {};
                     }
                 },
                 translation: {
                     type: Object,
-                    value: function() {
+                    value: function () {
                         return {}
                     },
                     notify: true
                 }
             },
 
-            _send: function() {
+            _send: function () {
                 this.$.textarea.disabled = true;
                 this.$.button.hidden = true;
-                //this._getMyObject().sentence = this.myTranslation;
-                //this.notifyPath('translation.' + this._getMyObjectName() + '.sentence', this._getMyObject().sentence);
-                this.set('translation.' + this._getMyObjectName() + '.sentence',  this.myTranslation); //notify true nicht für subproperties??
+                this.set('translation.' + this._getMyObjectName() + '.sentence', this.myTranslation);
                 console.log('my sentence: ' + this._getMyObject().sentence);
             },
 
-            _getMyObject: function() {
+            _getMyObject: function () {
                 return this.translation.user1.uid === this.myProfile.uid? this.translation.user1 : this.translation.user2;
             },
 
-            _getMyObjectName: function() {
+            _getMyObjectName: function () {
                 return this.translation.user1.uid === this.myProfile.uid? 'user1' : 'user2';
+            },
+
+            _getMyTranslation: function (translation) {
+                if (translation && translation.user1 && translation.user2) {
+                    return translation.user1.uid === this.myProfile.uid? translation.user1.sentence : translation.user2.sentence;
+                }
+            },
+
+            _isAlreadyTranslated: function (translation) {
+                return this._getMyTranslation(translation)? true : false;
             }
 
         });

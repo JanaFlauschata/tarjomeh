@@ -2,7 +2,8 @@
 
 <link rel="import" href="../tarjomeh-collapse/tarjomeh-collapse.html">
 <link rel="import" href="../tarjomeh-collection/tarjomeh-collection.html">
-<link rel="import" href="tarjomeh-mytranslation.html">
+<link rel="import" href="tarjomeh-my-translation.html">
+<link rel="import" href="tarjomeh-contact-translation.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
@@ -29,12 +30,9 @@
                 </div>
             </tarjomeh-collapse>
 
-            <tarjomeh-collapse>
-                <div class="title">Translated by <span>[[contactProfile.name]]</span></div>
-                <div class="content">[[_getContactTranslation(_translation)]]</div>
-            </tarjomeh-collapse>
+            <tarjomeh-contact-translation translation="{{_translation}}" contact-profile="{{contactProfile}}"></tarjomeh-contact-translation>
 
-            <tarjomeh-mytranslation translation="{{_translation}}" my-profile="{{myProfile}}"></tarjomeh-mytranslation>
+            <tarjomeh-my-translation translation="{{_translation}}" my-profile="{{myProfile}}"></tarjomeh-my-translation>
 
     </template>
 
@@ -84,12 +82,6 @@
                   if (newValue.path !== '_translation') {
                     this.$.translationCollection.addToChild(newValue.path.replace('_',''), newValue.value);
                }
-            },
-
-            _getContactTranslation: function(translation) {
-                if (translation && translation.user1 && translation.user2) {
-                    return translation.user1.uid === this.contactProfile.uid ? translation.user1.sentence : translation.user2.sentence;
-                }
             },
 
             _computePath: function(uid) {
