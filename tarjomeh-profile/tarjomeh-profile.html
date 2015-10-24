@@ -5,14 +5,7 @@
 <dom-module id="tarjomeh-profile">
 
     <template>
-
-        <style>
-
-        </style>
-
-        <tarjomeh-collection id="profileCollection" path="{{_computePath(uid)}}" data="{{data}}"
-                             user-uid="[[fbUser.uid]]"></tarjomeh-collection>
-
+        <style></style>
     </template>
 
     <script>
@@ -21,12 +14,8 @@
             properties: {
                 uid: {
                     type: String,
-                    value: ''
-                },
-                fbUser: {
-                    type: Object,
-                    value: function () {
-                        return {};
+                    value: function() {
+                        return hoodie.id();
                     }
                 },
                 profile: {
@@ -39,56 +28,34 @@
             },
 
             ready: function () {
-                //TODO refactor
-                this.$.profileCollection.$.fbCollection.query.once("value", function (snapshot) {
 
-                    if (this.data.length === 0) {
-                        this.profile = {};
-                        if (this.fbUser) {
-                            this.profile.uid = this.fbUser.uid;
-                            this.profile.provider = this.fbUser.provider;
-                        }
-                    }
-                    else {
-                        //this.profile = this.data[0];
-                        this.profile = this.$.profileCollection.getByKey('profile');
-                    }
-
-                    if (this.fbUser.uid) { //TODO refactor
-                        switch (this.fbUser.provider) {
-                            case 'password':
-                                break;
-                            case 'google':
-                                this.profile.name = this.fbUser.google.displayName; //TODO this.set?
-                                this.profile.imageurl = this.fbUser.google.profileImageURL;
-                                break;
-                            default:
-                                throw 'Unknown provider: ' + this.fbUser.provider;
-                        }
-                    }
-                    if (this.uid == this.fbUser.uid) {
-                        //TODO rethink
-                        this.profile.last_logout = this.profile.last_active;
-                        this.profile.last_login = Firebase.ServerValue.TIMESTAMP;
-                        this.$.profileCollection.addToChild('profile', this.profile);
-                    }
-
-                }.bind(this), function (errorObject) {
-                    throw 'Profile could not be read!';
-                });
-
-                this.$.profileCollection.$.fbCollection.query.on("value", function (snapshot) { //TODO refactor!!!
-                    //console.log('value event');
-                    this.profile = this.$.profileCollection.getByKey('profile');
-                }.bind(this));
-
-            },
-
-            _computePath: function (uid) {
-                if (uid !== '' && typeof uid !== 'undefined') {
-                    return 'users/' + uid;
+                if (this.uid === hoodie.id()) {
+                    hoodie.store.findOrAdd('profile', hoodie.id(), {name: hoodie.account.username})
+                            .publish()
+                            .done(function (profile) {
+                                this.profile = profile;
+                                //TODO implement
+//                                this.profile.last_logout = this.profile.last_active;
+//                                this.profile.last_login = Firebase.ServerValue.TIMESTAMP;
+//                                this.$.profileCollection.addToChild('profile', this.profile);
+                            })
+                            .fail(function (error) {
+                                console.error('profile could not be found or created');
+                                console.error(error);
+                            });
                 }
-                return null;
+                else {
+                    hoodie.global.find('profile', uid)
+                            .done(function (profile) {
+                                this.profile = profile;
+                                //TODO listen to changes
+                            })
+                            .fail(function (error) {
+                                console.error('profile for user ' + uid + ' could not be found');
+                                console.error(error);
+                            });
+                }
+
             }
 
         });

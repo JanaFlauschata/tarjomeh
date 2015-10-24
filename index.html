@@ -52,15 +52,16 @@
     <tarjomeh-loginscreen id="loginscreen" provider="{{provider}}" params="{{params}}"></tarjomeh-loginscreen>
     </div>
 
-    <div hidden="{{!loggedIn}}">
-    <!--<template is="dom-if" if="{{loggedIn}}" restamp>-->
+    <!--<div hidden="{{!loggedIn}}">-->
+    <template is="dom-if" if="{{loggedIn}}" restamp>
         <tarjomeh-app fb-user="{{fbUser}}"></tarjomeh-app>
-    <!--</template>-->
-    </div>
+    </template>
+    <!--</div>-->
 </template>
 </body>
 <script>
     var hoodie  = new Hoodie();
+    console.log(hoodie);
 
     var template = document.querySelector('#t');
 
@@ -74,7 +75,6 @@
         hoodie.account.on('signin signup', function(e){
             template.loggedIn = true;
 
-//            console.log(hoodie);
 //
 //                        var message = {
 //                'to': 'blupp',
