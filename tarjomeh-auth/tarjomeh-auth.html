@@ -6,70 +6,62 @@
 
 <dom-module id="tarjomeh-auth">
 
-  <template>
+    <template>
 
-    <style>
-    </style>
-    
-    <firebase-auth id="fbAuth" user="{{fbUser}}" location="https://radiant-inferno-3701.firebaseio.com" provider={{provider}} params={{params}} on-error="_errorHandler" redirect></firebase-auth>
+        <style>
+        </style>
 
-  </template>
+    </template>
 
-  <script>
-    Polymer({
-      is: "tarjomeh-auth",
-      listeners: {
-        "login": "_processLogin",
-        "logout": "_processLogout",
-        "user-created": "_processCreatedUser"
-      },
-      properties: {
-        fbUser: {
-          type: Object,
-          value: function(){
-            return {};
-          },
-          notify: true
-        },
-        errorMessage: {
-          type: String,
-          value: "",
-          notify: true
-        }
-      },
-      
-      login : function(provider, params) {
-        this.provider = provider;
-        this.$.fbAuth.login(params);
-      },
-  
-      logout : function() {
-        this.$.fbAuth.logout();
-      },
-      
-      createUser : function(email, password) {
-        this.$.fbAuth.createUser(email, password);
-      },
-      
-      _processLogin : function(event) {
-        console.log('login succeeded!');
+    <script>
+        Polymer({
+            is: "tarjomeh-auth",
+            properties: {
+                fbUser: {
+                    type: Object,
+                    value: function () {
+                        return {};
+                    },
+                    notify: true
+                }
+            },
 
-      },
-      
-       _processLogout : function(event) {
-         //TODO last_active won't be set correctly on logout
-        console.log('logout succeeded!');
-      },
-      
-       _processCreatedUser : function(event) {
-        console.log('user created!');
-      },
-      
-       _errorHandler : function(event) {
-        this.errorMessage = event.detail.message;
-        console.log(this.errorMessage);
-      }
-    });
-  </script>
+            login: function (username, password) {
+                hoodie.account.signIn(username, password)
+                        .done(this._onSignIn)
+                        .fail(this._showError.bind(this));
+            },
+
+            logout: function () {
+                hoodie.account.signOut()
+                        .done(this._onSignOut)
+                        .fail(this._showError.bind(this));
+            },
+
+            createUser: function (username, password) {
+                hoodie.account.signUp(username, password)
+                        .done(this._onSignUp)
+                        .fail(this._showError.bind(this));
+
+            },
+
+            _onSignIn: function (username) {
+                console.log(username + ' logged in...');
+
+            },
+
+            _onSignOut: function (username) {
+                console.log(username + ' logged out...');
+            },
+
+            _onSignUp: function (username) {
+                console.log('created user for ' + username + '...');
+            },
+
+            _showError: function(error) {
+                this.fire('toast', {text: error.message, isError: true});
+            }
+        });
+    </script>
 
 </dom-module>

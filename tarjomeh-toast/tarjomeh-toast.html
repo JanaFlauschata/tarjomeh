@@ -1,0 +1,38 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+
+<dom-module id="tarjomeh-toast">
+
+    <template>
+
+        <style>
+            .error {
+                background-color: #D50000;
+            }
+        </style>
+
+        <paper-toast id="toast" text="{{_text}}"></paper-toast>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: "tarjomeh-toast",
+            properties: {
+                _text: {
+                    type: String,
+                    value: ''
+                }
+            },
+
+            show: function (text, isError) {
+                this.toggleClass('error', isError, this.$.toast);
+                this._text = text;
+                this.$.toast.show();
+            }
+
+        });
+    </script>
+
+</dom-module>

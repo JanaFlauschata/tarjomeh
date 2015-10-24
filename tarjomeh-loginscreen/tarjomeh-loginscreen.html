@@ -78,23 +78,23 @@
         this._toggleCreate(false);
       },
       
-      _showCreateAccount() {
+      _showCreateAccount: function() {
         this._togglePassword(false);
         this._toggleCreate(true);
         this._resetInputs();
       },
       
-      _showLoginPassword() {
+      _showLoginPassword: function() {
         this._togglePassword(true);
         this._toggleCreate(false);
         this._resetInputs();
       },
-      
-      _loginGoogle() {
+
+      _loginGoogle: function() {
         this._togglePassword(false);
         this._toggleCreate(false);
         this._resetInputs();
-        this.fire('login-requested', {provider: 'google', params: {}});
+        console.log('not implemented yet');
       },
       
       _togglePassword: function(show) {
@@ -110,14 +110,14 @@
       _loginPassword: function() {
         this._togglePassword(false);
         this._toggleCreate(false);
-        this.fire('login-requested', {provider: 'password', params: { "email": this.email, "password": this.password}});
+        this.fire('login-requested', {username: this.email, password: this.password});
         this._resetInputs();
       },
       
       _createUser: function() {
         this._togglePassword(false);
         this._toggleCreate(false);
-        this.fire('create-user-requested', {emailCreate: this.emailCreate, passwordCreate: this.passwordCreate});
+        this.fire('create-user-requested', {username: this.emailCreate, password: this.passwordCreate});
         this._resetInputs();
       },
       

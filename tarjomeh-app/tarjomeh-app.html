@@ -30,9 +30,7 @@
             }
         </style>
 
-        <tarjomeh-profile uid="[[fbUser.uid]]" fb-user="[[fbUser]]" profile="{{user}}"></tarjomeh-profile>
-
-        <!--<tarjomeh-collection id="messagesCollection" path="messages" data="{{messages}}"></tarjomeh-collection>-->
+        <!--<tarjomeh-profile uid="[[fbUser.uid]]" fb-user="[[fbUser]]" profile="{{user}}"></tarjomeh-profile>-->
 
         <paper-drawer-panel>
             <tarjomeh-sidebar user="{{user}}" drawer></tarjomeh-sidebar>
@@ -52,23 +50,11 @@
                 </paper-toolbar>
                 <iron-pages selected="{{_selected}}">
                     <div>
-                        <tarjomeh-game user="{{user}}"></tarjomeh-game>
+                        <!--<tarjomeh-game user="{{user}}"></tarjomeh-game>-->
                     </div>
 
                     <div>
-                        <!--<template is="dom-repeat" items="[[messages]]" as="message">
-                          <div class="layout horizontal" style="padding: 16px">
-                           <div class="avatar" style$="[[computeImgStyle(message.img)]]"></div>
-                            <div flex>
-                            <div>[[message.name]]</div>
-                            <div>[[message.text]]</div>
-                            </div>
-                          </div>
-                      </template>
-                         <div class="send-message layout horizontal">
-                            <paper-input flex label="Type message..." id="input" value="{{input}}"></paper-input>
-                            <paper-fab icon="send" id="sendButton" on-tap="sendMessage"></paper-fab>
-                          </div>-->
+                       Archive
                     </div>
                 </iron-pages>
             </paper-header-panel>
