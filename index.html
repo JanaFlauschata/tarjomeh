@@ -75,7 +75,7 @@
         hoodie.account.on('signin signup', function(e){
             template.loggedIn = true;
 
-//
+
 //                        var message = {
 //                'to': 'blupp',
 //                'body': 'Hello'
@@ -86,15 +86,14 @@
 //            }).fail(function(error){
 //                        console.log("Message couldn't be sent: ",error);
 //                    });
-//
+
 //                var messages = hoodie.directMessages.findAll().done(function(result){
 //                    console.log(result);
 //                }).fail(function(error) {
 //                  console.log(error);
 //                });
 
-//            hoodie.store.findOrAdd('profile', hoodie.id(), {id: hoodie.id(), email: 'j@bla.de', time: Date()})
-//                    .publish()
+//            hoodie.store.findOrAdd('profile', hoodie.id(), {id: hoodie.id(), email: 'j@bla.de', numbers: [{a: 1, b: 5}, {a: 5, b: 9}, {a: 34, b: 78}]})
 //                    .done(function(profile){
 //                        console.log('found/added and published profile');
 //                        console.log(profile);
@@ -111,6 +110,26 @@
 //                    })
 //                    .fail(function(error){
 //                        console.log('no profiles could be found');
+//                        console.log(error);
+//                    });
+
+//            var store = hoodie.open('hoodie-plugin-tarjomeh-languages');
+//
+//            store.connect();
+//
+//            store.findAll('language').done(function (languages) {
+//                console.log(languages)
+//            }).fail(function(){
+//                console.log('could not read languages');
+//            });
+
+//            hoodie.profile.findOrAdd({name: hoodie.account.username})
+//                    .done(function(profile){
+//                        console.log('found or added profile');
+//                        console.log(profile);
+//                    })
+//                    .fail(function(error){
+//                        console.log('could not find or add profile');
 //                        console.log(error);
 //                    });
             

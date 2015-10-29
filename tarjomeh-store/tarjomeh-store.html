@@ -1,0 +1,86 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="tarjomeh-store">
+
+    <template>
+        <style></style>
+    </template>
+
+    <script>
+        Polymer({
+            is: "tarjomeh-store",
+            properties: {
+                data: {
+                    type: Object,
+                    notify: true,
+                    value: function () {
+                        return {};
+                    }
+                },
+                store: {
+                    type: String,
+                    value: ''
+                },
+                type: {
+                    type: String,
+                    value: ''
+                },
+                id: {
+                    type: String,
+                    value: ''
+                },
+                _store: {
+                    type: Object,
+                    value: function () {
+                        return {};
+                    }
+                }
+            },
+
+            ready: function () {
+                if (this.store === '') {
+                    this._store = hoodie.store;
+                }
+                else {
+                    this._store = hoodie.open(this.store);
+                    this._store.connect();
+                }
+                //TODO performance
+                this._store.findAll(this.type)
+                        .done(function(data){
+                            this.set('data', data);
+                            //this.data = data;
+                        }.bind(this))
+                        .fail(function(error){
+                            console.error('could not read data of type ' + this.type);
+                            console.error(error);
+                        });
+            },
+
+            add: function (entry) {
+
+            },
+
+            update: function (entry) {
+
+            },
+
+            remove: function (entry) {
+
+            },
+
+            removeByKey: function (key) {
+
+            },
+
+            getByKey: function (key) {
+
+            },
+
+            addToChild: function (child, entry) {
+
+            }
+        });
+    </script>
+
+</dom-module>

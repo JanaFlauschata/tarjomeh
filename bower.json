@@ -6,21 +6,20 @@
   "author": "",
   "private": true,
   "dependencies": {
-    "firebase-element": "GoogleWebComponents/firebase-element#~1.0.6",
+    "firebase-element": "GoogleWebComponents/firebase-element#^1.0.6",
     "iron-elements": "PolymerElements/iron-elements#^1.0.0",
-    "iron-icons": "PolymerElements/iron-icons#~1.0.3",
+    "iron-icons": "PolymerElements/iron-icons#^1.0.3",
     "moment": "~2.10.6",
-    "neon-animation": "PolymerElements/neon-animation#~1.0.6",
-    "paper-elements": "PolymerElements/paper-elements#^1.0.1",
-    "pubnub-element": "pubnub-polymer#4.0.1"
+    "neon-animation": "PolymerElements/neon-animation#^1.0.6",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.1"
   },
   "resolutions": {
-    "polymer": "^1.1.3",
+    "polymer": "^1.2.0",
     "webcomponentsjs": "^0.7.2",
     "paper-button": "^1.0.0",
     "paper-ripple": "^1.0.0",
     "font-roboto": "^1.0.1",
-    "web-animations-js": "2.1.2",
+    "web-animations-js": "^2.1.2",
     "paper-elements": "^1.0.1",
     "paper-checkbox": "^1.0.0",
     "paper-dialog": "^1.0.1",
@@ -37,7 +36,6 @@
     "paper-spinner": "^1.0.0",
     "paper-tabs": "^1.0.0",
     "paper-toast": "^1.0.0",
-    "paper-toggle-button": "^1.0.0",
-    "pubnub-element": "4.0.1"
+    "paper-toggle-button": "^1.0.0"
   }
 }

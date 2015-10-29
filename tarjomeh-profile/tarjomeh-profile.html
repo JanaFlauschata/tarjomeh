@@ -27,35 +27,46 @@
                 }
             },
 
+            observers: [
+                '_nativeLanguagesChanged(profile.*)'
+            ],
+
             ready: function () {
 
                 if (this.uid === hoodie.id()) {
-                    hoodie.store.findOrAdd('profile', hoodie.id(), {name: hoodie.account.username})
-                            .publish()
+                    hoodie.profile.findOrAdd({name: hoodie.account.username, bla: 'blupp'})
                             .done(function (profile) {
                                 this.profile = profile;
                                 //TODO implement
 //                                this.profile.last_logout = this.profile.last_active;
 //                                this.profile.last_login = Firebase.ServerValue.TIMESTAMP;
 //                                this.$.profileCollection.addToChild('profile', this.profile);
-                            })
+                            }.bind(this))
                             .fail(function (error) {
                                 console.error('profile could not be found or created');
                                 console.error(error);
                             });
                 }
                 else {
-                    hoodie.global.find('profile', uid)
+                    hoodie.profile.find('profile', uid)
                             .done(function (profile) {
                                 this.profile = profile;
-                                //TODO listen to changes
-                            })
+                            }.bind(this))
                             .fail(function (error) {
                                 console.error('profile for user ' + uid + ' could not be found');
                                 console.error(error);
                             });
                 }
 
+                hoodie.profile.on(this.uid + ':update', function(changedProfile) {
+                    console.log(changedProfile);
+                    this.profile = changedProfile;
+                }.bind(this));
+
+            },
+
+            _nativeLanguagesChanged: function(changeRecord){
+                console.log(changeRecord);
             }
 
         });
