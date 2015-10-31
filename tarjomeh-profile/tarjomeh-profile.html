@@ -14,7 +14,7 @@
             properties: {
                 uid: {
                     type: String,
-                    value: function() {
+                    value: function () {
                         return hoodie.id();
                     }
                 },
@@ -28,7 +28,7 @@
             },
 
             observers: [
-                '_nativeLanguagesChanged(profile.*)'
+                '_profileChanged(profile.*)'
             ],
 
             ready: function () {
@@ -58,15 +58,26 @@
                             });
                 }
 
-                hoodie.profile.on(this.uid + ':update', function(changedProfile) {
-                    console.log(changedProfile);
+                hoodie.profile.on(this.uid + ':update', function (changedProfile) {
                     this.profile = changedProfile;
                 }.bind(this));
 
             },
 
-            _nativeLanguagesChanged: function(changeRecord){
-                console.log(changeRecord);
+            _profileChanged: function (changeRecord) {
+                var path = changeRecord.path.split('.');
+                var property = path[1];
+                if (property) {
+                    var changedProperties = {};
+                    changedProperties[property] = changeRecord.base[property]
+                    this.debounce('update', function () {
+                        hoodie.profile.update(changedProperties)
+                                .fail(function (error) {
+                                    console.error('profile for user ' + uid + ' could not be updated');
+                                    console.error(error);
+                                });
+                    }, 10000);
+                }
             }
 
         });

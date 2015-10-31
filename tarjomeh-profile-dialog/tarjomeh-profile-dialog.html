@@ -64,10 +64,6 @@
                 <div class="title flex">Edit your profile</div>
             </paper-toolbar>
 
-            <div class="settings-block" hidden={{!_hasAccount(user)}}>
-                <paper-input class="flex" value="{{user.name}}" label="Change your display name"></paper-input>
-            </div>
-
             <!--TODO extract to a polymer element -->
             <div class="settings-block">
                 <div class="label">Pick your native language(s)</div>
@@ -212,13 +208,6 @@
 
                 this.push('_chooseableLanguages', language);
                 this._updateMenuButtonStates();
-            },
-
-            _hasAccount: function (user) {
-                if (user) {
-                    return user.provider === 'password';
-                }
-                return false;
             },
 
             _updateMenuButtonStates: function () {
