@@ -13,6 +13,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 
 <link rel="import" href="../tarjomeh-store/tarjomeh-store.html">
+<link rel="import" href="../tarjomeh-profile-image/tarjomeh-profile-image.html">
 <link rel="import" href="../app-theme.html">
 
 <dom-module id="tarjomeh-profile-dialog">
@@ -66,9 +67,7 @@
             </paper-toolbar>
 
             <div class="settings-block">
-                <paper-input label="upload a file!" type="file" accept="image/*" on-change="_uploadImage" always-float-label>
-                </paper-input>
-                <iron-image src="{{imageSrc}}"></iron-image>
+                <tarjomeh-profile-image user="{{user}}"></tarjomeh-profile-image>
             </div>
 
             <!--TODO extract to a polymer element -->
