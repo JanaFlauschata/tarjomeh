@@ -34,7 +34,7 @@
             ready: function () {
 
                 if (this.uid === hoodie.id()) {
-                    hoodie.profile.findOrAdd({name: hoodie.account.username, bla: 'blupp'})
+                    hoodie.profile.findOrAdd({name: hoodie.account.username})
                             .done(function (profile) {
                                 this.profile = profile;
                                 //TODO implement
@@ -58,25 +58,27 @@
                             });
                 }
 
-                hoodie.profile.on(this.uid + ':update', function (changedProfile) {
-                    this.profile = changedProfile;
-                }.bind(this));
+                if (this.uid !== hoodie.id()) {
+                    hoodie.profile.on(this.uid + ':update', function (changedProfile) {
+                        this.profile = changedProfile;
+                    }.bind(this));
+                }
 
             },
 
             _profileChanged: function (changeRecord) {
-                var path = changeRecord.path.split('.');
-                var property = path[1];
-                if (property) {
-                    var changedProperties = {};
-                    changedProperties[property] = changeRecord.base[property]
-                    this.debounce('update', function () {
+                if (this.uid === hoodie.id()) {
+                    var path = changeRecord.path.split('.');
+                    var property = path[1];
+                    if (property) {
+                        var changedProperties = {};
+                        changedProperties[property] = changeRecord.base[property]
                         hoodie.profile.update(changedProperties)
                                 .fail(function (error) {
                                     console.error('profile for user ' + uid + ' could not be updated');
                                     console.error(error);
                                 });
-                    }, 10000);
+                    }
                 }
             }
 

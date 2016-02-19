@@ -72,7 +72,7 @@
             template.loggedIn = false;
         });
 
-        hoodie.account.on('signin signup', function(e){
+        hoodie.account.on('signin signup reauthenticated', function(e){
             template.loggedIn = true;
 
 
