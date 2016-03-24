@@ -1,18 +1,12 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
-<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-icons/social-icons.html">
-<link rel="import" href="../bower_components/iron-image/iron-image.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 
-<link rel="import" href="../tarjomeh-store/tarjomeh-store.html">
 <link rel="import" href="../app-theme.html">
 
 <dom-module id="tarjomeh-profile-image">
@@ -20,12 +14,91 @@
     <template>
 
         <style>
+            paper-menu-button {
+                padding: 0;
+            }
 
+            paper-item {
+                cursor: pointer;
+            }
+
+            #upload {
+                position: relative;
+                overflow: hidden;
+                height: 100%;
+            }
+
+            #fileInput {
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: 0;
+                margin: 0;
+                opacity: 0;
+                padding: 0;
+                overflow: hidden !important;
+                z-index: 2;
+                cursor: pointer;
+            }
+
+            .avatar {
+                border-radius: 50%;
+                background: #9e9e9e center center no-repeat;
+                background-size: contain;
+                width: 200px;
+                height: 200px;
+                margin: 0 16px 0 0;
+                position: relative;
+            }
+
+            .container:hover .overlay {
+                display: flex
+            }
+
+            .overlay {
+                position: absolute;
+                display: none;
+                opacity: 0.8;
+                border-radius: 50%;
+                background: #9e9e9e center center no-repeat;
+                background-size: contain;
+                width: 200px;
+                height: 200px;
+                z-index: 1;
+                cursor: pointer;
+            }
+
+            .text-and-icon {
+                color: white;
+            }
         </style>
 
-            <paper-input label="upload a file!" type="file" accept="image/*" on-change="_uploadImage" always-float-label>
-            </paper-input>
-            <iron-image src="{{imageSrc}}"></iron-image>
+        <div class="layout horizontal center-justified">
+            <paper-menu-button id="menuButton">
+
+                <div class="container dropdown-trigger" on-tap="_positionMenu">
+                    <div class="overlay layout center center-justified">
+                        <div class="layout vertical center text-and-icon">
+                            <iron-icon icon="image:photo-camera"></iron-icon>
+                            CHANGE YOUR IMAGE
+                        </div>
+                    </div>
+                    <iron-image src="{{imageSrc}}" class="avatar"></iron-image>
+                </div>
+
+                <paper-menu id="menu" class="dropdown-content" on-iron-select="_select">
+                    <paper-item id="upload">
+                        Upload a photo
+                        <input id="fileInput" type="file" accept="image/*" on-change="_uploadImage">
+                    </paper-item>
+                    <paper-item id="remove" hidden="{{_noImage}}">Remove photo</paper-item>
+                </paper-menu>
+
+            </paper-menu-button>
+        </div>
 
     </template>
 
@@ -33,36 +106,70 @@
         Polymer({
             is: "tarjomeh-profile-image",
             properties: {
-                user: {
-                    type: Array,
-                    value: function () {
-                        return [];
-                    },
-                    notify: true,
+                image: {
+                    type: String,
+                    notify: true
                 }
             },
 
-            // upload file
+            observers: [
+                '_imageChanged(image)'
+            ],
+
+            ready: function(){
+                //TODO does not work
+                this.$.menu.selected = -1;
+
+                //TODO extract to method
+                if (this.image) {
+                    this._noImage = false;
+                }
+                else {
+                    this._noImage = true;
+                }
+            },
+
+            //TODO does not work
+            _positionMenu: function (event) {
+                this.$.menu.style.top = event.detail.y;
+                this.$.menu.style.left = event.detail.x;
+            },
+
+            _select: function (event) {
+                switch (event.detail.item.id) {
+                    case 'upload':
+                        break;
+                    case 'remove':
+                        this._removeImage();
+                        break;
+                    default:
+                }
+                this.$.menu.selected = -1;
+            },
+
+            _imageChanged: function (imageId) {
+                if (imageId) {
+                    var image = hoodie.imagine.get(imageId);
+                    this.imageSrc = image.url('avatar');
+                    this._noImage = false;
+                }
+                else {
+                    this._noImage = true;
+                }
+            },
+
             _handleFile: function (file) {
                 return function (event) {
                     var dataUrl = event.target.result;
                     hoodie.imagine.add('profile', dataUrl)
-                            .progress(function (image) {
-                                // image id and resized image is ready
-                                // image properties: id, dataUrl, width, height, canvas
-
-                                // show preview image
-                                this.imageSrc = image.dataUrl;
-                            }.bind(this))
                             .done(function (image) {
-                                // image has been saved on the server
-                                console.log(image.url('detail'));
-                                console.log(image.url('avatar'));
-                                console.log(image);
-                                this.imageSrc = window.location.href + image.url('avatar');
+                                if (this.image) {
+                                    hoodie.imagine.remove(this.image);
+                                }
+                                this.set('image', image.id);
                             }.bind(this))
                             .fail(function (error) {
-                                console.error('the image could not be saved');
+
                                 console.error(error);
                             });
                 }.bind(this);
@@ -71,20 +178,28 @@
             _uploadImage: function (event) {
                 event.preventDefault();
 
-                var files = event.target.files,
-                        i, file;
-
+                var files = event.target.files, i, file;
 
                 for (i = 0; (file = files[i]); i++) {
-
-                    if (!file.type.match('image.*')) {
-                        continue;
-                    }
-
+                    if (!file.type.match('image.*')) continue;
                     var reader = new FileReader();
                     reader.onload = this._handleFile(file);
                     reader.readAsDataURL(file);
                 }
+            },
+
+            _removeImage: function() {
+                hoodie.imagine.remove(this.image)
+                        .done(function(){
+                            //this.set('image', null);
+                            this.image = null;
+                            this.imageSrc = null;
+                            this._noImage = true;
+                        }.bind(this))
+                        .fail(function (error) {
+                            console.error('the image could not be removed successfully');
+                            console.error(error);
+                        });
             }
         });
     </script>

@@ -66,6 +66,7 @@
             <div class="paper-header">
                 <div class="layout horizontal center justified">
                     <div class="avatar" style$="[[_computeImgStyle(user.imageurl)]]"></div>
+                    <iron-image src="{{imageSrc}}" class="avatar"></iron-image>
                     <div class="username flex">{{user.name}}</div>
                 </div>
 
@@ -98,8 +99,7 @@
                         Logout
                     </paper-item>
                 </paper-menu>
-
-                <div>
+            </div>
         </paper-header-panel>
 
 

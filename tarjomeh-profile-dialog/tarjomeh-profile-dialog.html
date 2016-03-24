@@ -8,7 +8,6 @@
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
-<link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 
@@ -67,7 +66,7 @@
             </paper-toolbar>
 
             <div class="settings-block">
-                <tarjomeh-profile-image user="{{user}}"></tarjomeh-profile-image>
+                <tarjomeh-profile-image image="{{user.image}}"></tarjomeh-profile-image>
             </div>
 
             <!--TODO extract to a polymer element -->
@@ -145,52 +144,6 @@
 
             open: function () {
                 this.$.dialog.open();
-            },
-
-            // upload file
-            _handleFile: function (file) {
-                return function (event) {
-                    var dataUrl = event.target.result;
-                    hoodie.imagine.add('profile', dataUrl)
-                            .progress(function (image) {
-                                // image id and resized image is ready
-                                // image properties: id, dataUrl, width, height, canvas
-
-                                // show preview image
-                                this.imageSrc = image.dataUrl;
-                            }.bind(this))
-                            .done(function (image) {
-                                // image has been saved on the server
-                                console.log(image.url('detail'));
-                                console.log(image.url('avatar'));
-                                console.log(image);
-                                this.imageSrc = window.location.href + image.url('avatar');
-                            }.bind(this))
-                            .fail(function (error) {
-                                console.error('the image could not be saved');
-                                console.error(error);
-                            });
-                }.bind(this);
-            },
-
-
-            _uploadImage: function (event) {
-                event.preventDefault();
-
-                var files = event.target.files,
-                        i, file;
-
-
-                for (i = 0; (file = files[i]); i++) {
-
-                    if (!file.type.match('image.*')) {
-                        continue;
-                    }
-
-                    var reader = new FileReader();
-                    reader.onload = this._handleFile(file);
-                    reader.readAsDataURL(file);
-                }
             },
 
             _sort: function (languageA, languageB) {
